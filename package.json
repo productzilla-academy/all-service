@@ -1,0 +1,41 @@
+{
+  "name": "productzilla-core-system",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "@types/chai": "^4.2.14",
+    "@types/express": "^4.17.8",
+    "@types/file-type": "^10.9.1",
+    "@types/mocha": "^8.0.3",
+    "@types/node": "^14.14.5",
+    "@types/pino": "^6.3.3",
+    "@types/uuid": "^8.3.0",
+    "body-parser": "^1.19.0",
+    "chai": "^4.2.0",
+    "config": "^3.3.2",
+    "express": "^4.17.1",
+    "express-async-errors": "^3.1.1",
+    "express-fileupload": "^1.2.0",
+    "file-type": "^16.0.0",
+    "js-base64": "^3.5.2",
+    "knex": "^0.21.6",
+    "mocha": "^8.2.1",
+    "mysql": "^2.18.1",
+    "opentracing": "^0.14.4",
+    "pino": "^6.7.0",
+    "ts-node": "^9.0.0",
+    "ts-node-dev": "^1.0.0",
+    "typescript": "^4.0.3",
+    "uuid": "^8.3.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "mocha -r ts-node/register tests/**/*.test.ts",
+    "migrate": "ts-node app.ts migrate",
+    "dev": "ts-node-dev app.ts serve",
+    "start": "ts-node app.ts serve"
+  },
+  "author": "",
+  "license": "ISC"
+}
