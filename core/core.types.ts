@@ -5,7 +5,7 @@
 // 	Created time.Time `json:"created"`
 // 	Updated time.Time `json:"updated"`
 
-import Assets from "./asset/asset";
+import Assets from "./assets/asset";
 
 // }
 export interface Generic {
@@ -24,9 +24,8 @@ export interface Resource {
 export interface General extends Generic{
   name: string
   description: string
-  resources: Resource
   overview: string
-  linkPath: string
+  link_path: string
 }
 
 export interface PaginationParam {

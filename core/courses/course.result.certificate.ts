@@ -5,4 +5,5 @@ export default interface Certificate extends Generic {
   course: Course
   weight_goal: number
   format: string
+  caption: string
 }

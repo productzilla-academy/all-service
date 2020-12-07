@@ -1,0 +1,1 @@
+export const INDEX_TABLE_RESULT = 'course_result_certificates'

@@ -1,19 +1,20 @@
 import { Generic } from "../core.types";
 
-enum QuiestionType {
-  MULTIPLE_CHOISE = "multiple_choise"
+export enum QuestionType {
+  MULTIPLE_CHOISE = "multiple_choise",
+  ESSAY = "essay"
 }
 
 export interface Options {
   label: string
   value: string
-  isAnswer: boolean
-  weight: number
+  is_answer: boolean
 }
 
 export interface Question extends Generic{
-  type: QuiestionType
+  type: QuestionType
   question: string
-  answer: string
-  options: Options
+  answer?: string
+  options: Options[]
+  weight: number
 }

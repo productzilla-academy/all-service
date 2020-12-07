@@ -8,9 +8,9 @@ import Quiz from "./course.quiz";
 
 export default interface Module extends General{
   course: Course
-  parentModule?: Module
+  parent_module?: Module
+  sub_modules_count: number,
   content: string
   quiz?: Quiz
   weight: number
-  open: Date
 }
