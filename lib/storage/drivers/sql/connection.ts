@@ -1,6 +1,6 @@
 import knex from 'knex'
-import ConfigProvider from '../../../config'
-import { INDEX_TABLE_CAREERS, INDEX_TABLE_LEVELS} from "../../careers";
+import ConfigProvider from '../../../../config'
+import { INDEX_TABLE_CAREERS, INDEX_TABLE_LEVELS} from "../../../careers";
 import { 
   INDEX_TABLE_COURSES, 
   INDEX_TABLE_MODULES,
@@ -8,7 +8,7 @@ import {
   INDEX_TABLE_QUIZ,
   INDEX_TABLE_RESULT,
   INDEX_TABLE_QUESTION_OPTIONS
-} from "../../courses";
+} from "../../../courses";
 const path = require('path')
 
 export const tables = {
