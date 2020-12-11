@@ -10,7 +10,7 @@ import {
   INDEX_TABLE_QUESTION_OPTIONS
 } from "../../../courses";
 const path = require('path')
-
+var SQLConn: knex = null
 export const tables = {
   INDEX_TABLE_CAREERS,
   INDEX_TABLE_LEVELS,
@@ -21,11 +21,11 @@ export const tables = {
   INDEX_TABLE_QUIZ,
   INDEX_TABLE_RESULT
 }
-
-export const connection = (c: ConfigProvider) => {
+export const SQLConnection = (c: ConfigProvider) => {
+  if(SQLConn) return SQLConn
   let client = c.dsnProtocol()
   let connection = c.dsn()
-  return knex({
+  SQLConn = knex({
     client,
     connection,
     pool: { min: 0, max: 7 },
@@ -33,4 +33,7 @@ export const connection = (c: ConfigProvider) => {
       directory: path.join(__dirname, './migrations')
     }
   })
+  return SQLConn
 }
+
+export default SQLConnection

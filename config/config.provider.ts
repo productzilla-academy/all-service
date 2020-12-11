@@ -1,4 +1,5 @@
 import config from 'config'
+import { Tracer } from 'opentracing'
 import pino, { BaseLogger } from 'pino'
 import { ConfigProvider } from './config'
 
@@ -13,7 +14,13 @@ export const [
   'listen.host',
   'default.sender',
 
-  'productzilla-core-system'
+  'productzilla-core-system',
+
+  'objectstorage.url',
+
+  'elasticsearch.url',
+
+  'jaeger.url'
 ]
 
 function newLogger(): BaseLogger {
@@ -25,7 +32,6 @@ function newLogger(): BaseLogger {
 }
 
 export class Config implements ConfigProvider {
- 
   l?: BaseLogger = undefined
   
   listenHost(): string {
@@ -43,6 +49,21 @@ export class Config implements ConfigProvider {
   }
   defaultSender(): string {
     return config.get(keyDefaultSender)
+  }
+  objectStorageURL(): string {
+    throw new Error('Method not implemented.')
+  }
+  elasticsearchURL(): string {
+    throw new Error('Method not implemented.')
+  }
+  dsn(): string {
+    throw new Error('Method not implemented.')
+  }
+  dsnProtocol(): string {
+    throw new Error('Method not implemented.')
+  }
+  traccer(): Tracer {
+    throw new Error('Method not implemented.')
   }
 }
 
