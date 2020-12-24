@@ -1,7 +1,14 @@
+import ConfigProvider from "../../../../config";
 import Context from "../../../../context";
 import CareerManager, { Career, Level } from "../../../../core/careers";
 
 export default class CareerElasticsearchProvider implements CareerManager {
+  c: ConfigProvider
+
+  constructor(c: ConfigProvider){
+    this.c = c
+  }
+  
   createCareer(context: Context, career: Career): Promise<void> {
     throw new Error("Method not implemented.");
   }

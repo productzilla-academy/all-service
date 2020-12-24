@@ -1,6 +1,6 @@
 import { tables } from "../connection"
 import * as Knex from 'knex'
-import { SubscriptionType } from "../../../../core/courses/course"
+import { SubscriptionType } from "../../../../../core/transactions/billing"
 
 export const up = (knex: Knex, promise: Promise<any>) => {
   return knex.schema.createTable(tables.INDEX_TABLE_COURSES, (table: Knex.CreateTableBuilder) => {
@@ -17,8 +17,6 @@ export const up = (knex: Knex, promise: Promise<any>) => {
     table.string('creator', 100).notNullable()
     table.foreign('level').references(`${tables.INDEX_TABLE_LEVELS}.id`)
     table.boolean('open').defaultTo(false)
-    table.enum('subscription_type', [SubscriptionType.FREE, SubscriptionType.ONE_TIME, SubscriptionType.SUBSCRIPTION]).defaultTo(SubscriptionType.FREE)
-    table.bigInteger('price').defaultTo(0)    
   })
 }
 

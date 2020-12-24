@@ -1,6 +1,8 @@
 import knex from 'knex'
 import ConfigProvider from '../../../../config'
 import { INDEX_TABLE_CAREERS, INDEX_TABLE_LEVELS} from "../../../careers";
+import { INDEX_TABLE_BILLING_PLANS, INDEX_TABLE_TRANSACTIONS} from "../../../transactions";
+import { INDEX_TABLE_ENROLLMENTS, INDEX_TABLE_LEARN_PROCESS, INDEX_TABLE_QUIZ_ANSWER } from "../../../enrollment";
 import { 
   INDEX_TABLE_COURSES, 
   INDEX_TABLE_MODULES,
@@ -19,7 +21,12 @@ export const tables = {
   INDEX_TABLE_QUESTIONS,
   INDEX_TABLE_QUESTION_OPTIONS,
   INDEX_TABLE_QUIZ,
-  INDEX_TABLE_RESULT
+  INDEX_TABLE_RESULT,
+  INDEX_TABLE_BILLING_PLANS,
+  INDEX_TABLE_TRANSACTIONS,
+  INDEX_TABLE_ENROLLMENTS,
+  INDEX_TABLE_LEARN_PROCESS,
+  INDEX_TABLE_QUIZ_ANSWER
 }
 export const SQLConnection = (c: ConfigProvider) => {
   if(SQLConn) return SQLConn

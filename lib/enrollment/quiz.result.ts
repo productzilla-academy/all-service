@@ -1,0 +1,1 @@
+export const INDEX_TABLE_QUIZ_ANSWER = `quiz_answer`

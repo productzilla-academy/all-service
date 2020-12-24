@@ -10,6 +10,12 @@ export interface CoreManager {
   courseManager(): CourseManager
   enrollmentManager(): EnrollmentManager
   transactionManager(): TransactionManager
+  
+  setAssetManager(m: AssetManager)
+  setCareerManager(m: CareerManager)
+  setCourseManager(m: CourseManager)
+  setEnrollmentManager(m: EnrollmentManager)
+  setTransactionManager(m: TransactionManager)
 }
 
 export default CoreManager

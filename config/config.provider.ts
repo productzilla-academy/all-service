@@ -8,7 +8,15 @@ export const [
   keyListenHost,
   keyDefaultSender,
 
-  appName
+  appName,
+
+  keyObjectStorageURL,
+
+  keyElasticearchURL,
+
+  keyJaegerURL,
+  keyJaegerSampler,
+  keyJaegerConst
 ] = [
   'listen.port',
   'listen.host',
@@ -20,7 +28,9 @@ export const [
 
   'elasticsearch.url',
 
-  'jaeger.url'
+  'jaeger.url',
+  'jaeger.sampler',
+  'jaeger.const'
 ]
 
 function newLogger(): BaseLogger {

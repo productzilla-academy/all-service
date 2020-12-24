@@ -1,0 +1,1 @@
+export const INDEX_TABLE_LEARN_PROCESS = `learn_process`

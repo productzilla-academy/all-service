@@ -1,0 +1,1 @@
+export const INDEX_TABLE_BILLING_PLANS = `billing_plans`

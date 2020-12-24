@@ -2,32 +2,46 @@ import * as knex from "knex";
 import ConfigProvider from "../../../../config";
 import Context from "../../../../context";
 import CareerManager, { Career, Level } from "../../../../core/careers";
-import SQLConnection from "../../drivers/sql/connection";
+import { NotFoundError } from "../../../../errors";
+import SQLConnection, { tables } from "../../drivers/sql/connection";
 
 export default class CareerSQLProvider implements CareerManager {
   c: ConfigProvider
-  conn: knex
+  careerDB: knex.QueryBuilder<Career, Career[]>
+  levelDB: knex.QueryBuilder<Level, Level[]>
   constructor(c: ConfigProvider){
     this.c = c
-    this.conn = SQLConnection(c)
+    this.careerDB = SQLConnection(c)(tables.INDEX_TABLE_CAREERS)
+    this.levelDB = SQLConnection(c)(tables.INDEX_TABLE_LEVELS)
   }
-  createCareer(context: Context, career: Career): Promise<void> {
-    throw new Error("Method not implemented.");
+  async createCareer(context: Context, career: Career): Promise<void> {
+    await this.careerDB.insert(career)
   }
-  fetchCareer(context: Context): Promise<Career[]> {
-    throw new Error("Method not implemented.");
+  async fetchCareer(context: Context): Promise<Career[]> {
+    const careers = await this.careerDB
+    if(!careers.length) throw NotFoundError(`Career not found`)
+    return careers
   }
-  deleteCareer(context: Context, careerName: string): Promise<void> {
-    throw new Error("Method not implemented.");
+  async deleteCareer(context: Context, careerName: string): Promise<void> {
+    await this.careerDB.delete().where({ name: careerName })
   }
-  createCareerLevel(context: Context, careerName: string, level: Level): Promise<void> {
-    throw new Error("Method not implemented.");
+  async createCareerLevel(context: Context, careerName: string, level: Level): Promise<void> {
+    const [career] = await this.careerDB.where({ name: careerName })
+    if(!career) throw NotFoundError(`Career not found`)
+    const { id } = career as any
+    await this.levelDB.insert({ ...level, career: id as any as Career })
   }
-  fetchCareerLevel(context: Context, careerName: string): Promise<Level[]> {
-    throw new Error("Method not implemented.");
+  async fetchCareerLevel(context: Context, careerName: string): Promise<Level[]> {
+    const [career] = await this.careerDB.where({ name: careerName })
+    if(!career) throw NotFoundError(`Career not found`)
+    const { id } = career as any
+    const levels = await this.levelDB.where({
+      career: id
+    })
+    if(!levels.length) throw NotFoundError(`Level not found`)
+    return levels
   }
-  deleteLevel(context: Context, levelUUID: string): Promise<void> {
-    throw new Error("Method not implemented.");
+  async deleteLevel(context: Context, levelUUID: string): Promise<void> {
+    await this.levelDB.del().where(`uuid`, levelUUID)
   }
-
-} 
+}

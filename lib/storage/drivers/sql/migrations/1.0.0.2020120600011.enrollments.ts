@@ -2,8 +2,6 @@
 
 import { tables } from "../connection"
 import * as Knex from 'knex'
-import { SubscriptionType } from "../../../../core/transactions/billing"
-import { TransactionStatus } from "../../../../core/transactions/transaction"
 export const up = (knex: Knex, promise: Promise<any>) => {
   return knex.schema.createTable(tables.INDEX_TABLE_ENROLLMENTS, (table: Knex.CreateTableBuilder) => {
     table.bigIncrements('id').primary()

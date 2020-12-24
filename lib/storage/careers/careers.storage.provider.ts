@@ -1,7 +1,6 @@
 import ConfigProvider from "../../../config";
 import Context from "../../../context";
 import CareerManager, { Career, Level } from "../../../core/careers";
-import SQLConnection from "../drivers/sql/connection";
 import { SQLDBProtocols } from "../storage.types";
 import CareerElasticsearchProvider from "./elasticsearch/careers.elasticsearch.storage.provider";
 import CareerSQLProvider from "./sql/careers.sql.storage.provider";
@@ -14,26 +13,31 @@ export class CarrerStorageProvider implements CareerManager{
   constructor(c: ConfigProvider){
     this.c = c
     this.coldDB = SQLDBProtocols.indexOf(this.c.dsnProtocol()) ? new CareerSQLProvider(c) : null 
-    this.hotDB = c.elasticsearchURL() === '' ? null : new CareerElasticsearchProvider(c)
+    this.hotDB = !c.elasticsearchURL() ? null : new CareerElasticsearchProvider(c)
 
   }
-  createCareer(context: Context, career: Career): Promise<void> {
-    throw new Error("Method not implemented.");
+  async createCareer(context: Context, career: Career): Promise<void> {
+    this.coldDB && await this.coldDB.createCareer(context, career)
+    this.hotDB && await this.hotDB.createCareer(context, career)
   }
-  fetchCareer(context: Context): Promise<Career[]> {
-    throw new Error("Method not implemented.");
+  async fetchCareer(context: Context): Promise<Career[]> {
+    const careers = this.hotDB ? await this.hotDB.fetchCareer(context) : await this.coldDB.fetchCareer(context)
+    return careers
   }
-  deleteCareer(context: Context, careerName: string): Promise<void> {
-    throw new Error("Method not implemented.");
+  async deleteCareer(context: Context, careerName: string): Promise<void> {
+    this.coldDB && await this.coldDB.deleteCareer(context, careerName)
+    this.hotDB && await this.hotDB.deleteCareer(context, careerName)
   }
-  createCareerLevel(context: Context, careerName: string, level: Level): Promise<void> {
-    throw new Error("Method not implemented.");
+  async createCareerLevel(context: Context, careerName: string, level: Level): Promise<void> {
+    this.coldDB && await this.coldDB.createCareerLevel(context, careerName, level)
+    this.hotDB && await this.hotDB.createCareerLevel(context,  careerName, level)
   }
-  fetchCareerLevel(context: Context, careerName: string): Promise<Level[]> {
-    throw new Error("Method not implemented.");
+  async fetchCareerLevel(context: Context, careerName: string): Promise<Level[]> {
+    const levels = this.hotDB ? await this.hotDB.fetchCareerLevel(context, careerName) : await this.coldDB.fetchCareerLevel(context, careerName)
+    return levels
   }
-  deleteLevel(context: Context, levelUUID: string): Promise<void> {
-    throw new Error("Method not implemented.");
+  async deleteLevel(context: Context, levelUUID: string): Promise<void> {
+    this.coldDB && await this.coldDB.deleteLevel(context, levelUUID)
+    this.hotDB && await this.hotDB.deleteLevel(context,  levelUUID)
   }
-
 }

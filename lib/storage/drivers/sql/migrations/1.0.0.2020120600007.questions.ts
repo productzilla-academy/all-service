@@ -2,7 +2,7 @@
 
 import { tables } from "../connection"
 import * as Knex from 'knex'
-import { QuestionType } from '../../../../core/courses/course.quiz.questions'
+import { QuestionType } from '../../../../../core/courses/course.quiz.questions'
 export const up = (knex: Knex, promise: Promise<any>) => {
   return knex.schema.createTable(tables.INDEX_TABLE_QUESTIONS, (table: Knex.CreateTableBuilder) => {
     table.bigIncrements('id').primary()
