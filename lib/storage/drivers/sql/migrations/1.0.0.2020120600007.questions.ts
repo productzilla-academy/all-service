@@ -9,7 +9,8 @@ export const up = (knex: Knex, promise: Promise<any>) => {
     table.string('uuid', 200).unique()
     table.dateTime('created').notNullable().defaultTo(knex.fn.now())
     table.dateTime('updated').notNullable().defaultTo(knex.fn.now())
-    
+
+    table.foreign('quiz').references(`${tables.INDEX_TABLE_QUIZ}.id`)
     table.text(`question`).notNullable()
     table.text(`answer`).nullable().defaultTo(null)
     table.enum(`type`, [QuestionType.MULTIPLE_CHOISE, QuestionType.ESSAY])

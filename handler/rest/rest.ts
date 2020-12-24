@@ -5,11 +5,13 @@ import express from 'express'
 import {Server, createServer} from 'http'
 export default class HttpHandler implements HandlerProvider{
   m: CoreManager
-  c: ConfigProvider
+  configProvider: ConfigProvider
+
   app: Server
-  constructor(m: CoreManager, c: ConfigProvider) {
+  constructor(m: CoreManager, configProvider: ConfigProvider
+) {
     this.m = m
-    this.c = c
+    this.configProviderconfigProvider
     const app = express()
     app.use(`/`, router(c, m))
 

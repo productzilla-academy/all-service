@@ -4,10 +4,11 @@ import Registry from "./driver.registry"
 import RegistryDefault from "./driver.registry.default"
 
 export default class DriverDefault implements Driver {
-  private c: ConfigProvider
+  private configProvider: ConfigProvider
+
   private r: Registry
   constructor(){
-    this.c = new Config()
+    this.configProvider= new Config()
     this.r = new RegistryDefault(this.c)
   }
   configuration(): ConfigProvider {

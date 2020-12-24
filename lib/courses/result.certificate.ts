@@ -1,1 +1,1 @@
-export const INDEX_TABLE_RESULT = 'course_result_certificates'
+export const INDEX_TABLE_RESULT_CERTIFICATE = 'course_result_certificates'

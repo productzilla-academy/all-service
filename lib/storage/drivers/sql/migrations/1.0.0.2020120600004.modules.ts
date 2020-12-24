@@ -12,7 +12,7 @@ export const up = (knex: Knex, promise: Promise<any>) => {
     table.string('name', 100).notNullable()
     table.text('description').notNullable()
     table.text('overview').notNullable()
-    table.string('link_path', 100).unique
+    table.string('link_path', 100).unique()
 
     table.foreign('course').references(`${tables.INDEX_TABLE_COURSES}.id`)
     table.text('content').notNullable()

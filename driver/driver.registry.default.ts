@@ -7,10 +7,12 @@ import RegistryBase from "./driver.registry.base"
 
 
 export class RegistryDefault extends RegistryBase implements Registry {
-  c: ConfigProvider
-  constructor(c: ConfigProvider) {
+  configProvider: ConfigProvider
+
+  constructor(configProvider: ConfigProvider
+) {
     super()
-    this.c = c
+    this.configProviderconfigProvider
     const m = new CoreManagerDefault(c)
     this.set(this).setConfig(c).setManager(m)
   }

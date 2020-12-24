@@ -8,7 +8,7 @@ import {
   INDEX_TABLE_MODULES,
   INDEX_TABLE_QUESTIONS,
   INDEX_TABLE_QUIZ,
-  INDEX_TABLE_RESULT,
+  INDEX_TABLE_RESULT_CERTIFICATE,
   INDEX_TABLE_QUESTION_OPTIONS
 } from "../../../courses";
 const path = require('path')
@@ -21,14 +21,15 @@ export const tables = {
   INDEX_TABLE_QUESTIONS,
   INDEX_TABLE_QUESTION_OPTIONS,
   INDEX_TABLE_QUIZ,
-  INDEX_TABLE_RESULT,
+  INDEX_TABLE_RESULT_CERTIFICATE,
   INDEX_TABLE_BILLING_PLANS,
   INDEX_TABLE_TRANSACTIONS,
   INDEX_TABLE_ENROLLMENTS,
   INDEX_TABLE_LEARN_PROCESS,
   INDEX_TABLE_QUIZ_ANSWER
 }
-export const SQLConnection = (c: ConfigProvider) => {
+export const SQLConnection = (configProvider: ConfigProvider
+) => {
   if(SQLConn) return SQLConn
   let client = c.dsnProtocol()
   let connection = c.dsn()

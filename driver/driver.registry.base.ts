@@ -7,15 +7,17 @@ import Registry from "./driver.registry"
 
 export class RegistryBase {
   protected r: CoreRegistry
-  protected c: ConfigProvider
+  protected configProvider: ConfigProvider
+
   protected h: HandlerProvider
   protected m: CoreManager
   set(r: Registry): RegistryBase {
     this.r = r
     return this
   }
-  setConfig(c: ConfigProvider): RegistryBase {
-    this.c = c
+  setConfig(configProvider: ConfigProvider
+): RegistryBase {
+    this.configProviderconfigProvider
     return this
   }
   setManager(m: CoreManager): RegistryBase {

@@ -3,10 +3,12 @@ import Context from "../../../../context";
 import CareerManager, { Career, Level } from "../../../../core/careers";
 
 export default class CareerElasticsearchProvider implements CareerManager {
-  c: ConfigProvider
+  configProvider: ConfigProvider
 
-  constructor(c: ConfigProvider){
-    this.c = c
+
+  constructor(configProvider: ConfigProvider
+){
+    this.configProviderconfigProvider
   }
   
   createCareer(context: Context, career: Career): Promise<void> {

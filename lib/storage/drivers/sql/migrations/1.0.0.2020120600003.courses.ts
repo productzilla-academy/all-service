@@ -12,11 +12,14 @@ export const up = (knex: Knex, promise: Promise<any>) => {
     table.string('name', 100).notNullable()
     table.text('description').notNullable()
     table.text('overview').notNullable()
-    table.string('link_path', 100).unique
+    table.string('link_path', 100).unique()
 
-    table.string('creator', 100).notNullable()
+    table.string('tutor', 100).notNullable()
     table.foreign('level').references(`${tables.INDEX_TABLE_LEVELS}.id`)
     table.boolean('open').defaultTo(false)
+    table.integer('number').defaultTo(0)
+    table.integer('status').defaultTo(0)
+
   })
 }
 

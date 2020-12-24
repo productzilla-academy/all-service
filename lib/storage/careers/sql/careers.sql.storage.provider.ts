@@ -6,13 +6,15 @@ import { NotFoundError } from "../../../../errors";
 import SQLConnection, { tables } from "../../drivers/sql/connection";
 
 export default class CareerSQLProvider implements CareerManager {
-  c: ConfigProvider
+  configProvider: ConfigProvider
+
   careerDB: knex.QueryBuilder<Career, Career[]>
   levelDB: knex.QueryBuilder<Level, Level[]>
-  constructor(c: ConfigProvider){
-    this.c = c
-    this.careerDB = SQLConnection(c)(tables.INDEX_TABLE_CAREERS)
-    this.levelDB = SQLConnection(c)(tables.INDEX_TABLE_LEVELS)
+  constructor(configProvider: ConfigProvider
+){
+    this.configProvider = configProvider
+    this.careerDB = SQLConnection(configProvider)(tables.INDEX_TABLE_CAREERS)
+    this.levelDB = SQLConnection(configProvider)(tables.INDEX_TABLE_LEVELS)
   }
   async createCareer(context: Context, career: Career): Promise<void> {
     await this.careerDB.insert(career)

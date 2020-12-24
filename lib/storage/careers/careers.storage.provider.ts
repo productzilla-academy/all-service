@@ -6,14 +6,15 @@ import CareerElasticsearchProvider from "./elasticsearch/careers.elasticsearch.s
 import CareerSQLProvider from "./sql/careers.sql.storage.provider";
 
 export class CarrerStorageProvider implements CareerManager{
-  c: ConfigProvider
+  configProvider: ConfigProvider
+
   hotDB: CareerManager
   coldDB: CareerManager
   
-  constructor(c: ConfigProvider){
-    this.c = c
-    this.coldDB = SQLDBProtocols.indexOf(this.c.dsnProtocol()) ? new CareerSQLProvider(c) : null 
-    this.hotDB = !c.elasticsearchURL() ? null : new CareerElasticsearchProvider(c)
+  constructor(configProvider: ConfigProvider){
+    this.configProvider = configProvider
+    this.coldDB = SQLDBProtocols.indexOf(this.configProvider.dsnProtocol()) ? new CareerSQLProvider(configProvider): null 
+    this.hotDB = !configProvider.elasticsearchURL() ? null : new CareerElasticsearchProvider(configProvider)
 
   }
   async createCareer(context: Context, career: Career): Promise<void> {

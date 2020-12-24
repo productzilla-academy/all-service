@@ -15,6 +15,6 @@ export interface Question extends Generic{
   type: QuestionType
   question: string
   answer?: string
-  options: Options[]
+  options?: Options[]
   weight: number
 }
