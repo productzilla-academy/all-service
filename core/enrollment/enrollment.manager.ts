@@ -13,7 +13,7 @@ export interface Param {
   search: ObjectValueOf<string>
 }
 
-export default interface EnrollmentManager {
+export interface EntrollmentStorageManager {
   enroll(context: Context, course: Course, billingPlan: BillingPlan, student: Student, open: Date, expire?: Date): Promise<void>
   getEnrollment(context: Context, couresUUID: string, student: string): Promise<Enrollment>
 
@@ -23,4 +23,8 @@ export default interface EnrollmentManager {
   quizSubmit(context: Context, quiz: Quiz, question: Question, answer: string): Promise<void>
   getQuizResult(context: Context, quizUUID: string, studentUsername: string): Promise<QuizResult>
   
+}
+
+export default interface EntrollmentManager {
+  storage(): EntrollmentStorageManager
 }

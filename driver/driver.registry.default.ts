@@ -12,9 +12,9 @@ export class RegistryDefault extends RegistryBase implements Registry {
   constructor(configProvider: ConfigProvider
 ) {
     super()
-    this.configProviderconfigProvider
-    const m = new CoreManagerDefault(c)
-    this.set(this).setConfig(c).setManager(m)
+    this.configProvider = configProvider
+    const m = new CoreManagerDefault(configProvider)
+    this.set(this).setConfig(configProvider).setManager(m)
   }
   init(): void {
 
@@ -23,7 +23,7 @@ export class RegistryDefault extends RegistryBase implements Registry {
     return super.handler()
   }
   configuration(): ConfigProvider{
-    return this.c
+    return this.configProvider
   }
   manager(): CoreManager {
     return this.m

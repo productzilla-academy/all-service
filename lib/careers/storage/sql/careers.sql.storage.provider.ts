@@ -3,7 +3,7 @@ import ConfigProvider from "../../../../config";
 import Context from "../../../../context";
 import CareerManager, { Career, Level } from "../../../../core/careers";
 import { NotFoundError } from "../../../../errors";
-import SQLConnection, { tables } from "../../drivers/sql/connection";
+import SQLConnection, { tables } from "../../../storage/drivers/sql/connection";
 
 export default class CareerSQLProvider implements CareerManager {
   configProvider: ConfigProvider

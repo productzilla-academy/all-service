@@ -5,6 +5,7 @@
 // 	Created time.Time `json:"created"`
 // 	Updated time.Time `json:"updated"`
 
+import Context from "../context";
 import Assets from "./assets/asset";
 
 // }
@@ -45,4 +46,11 @@ export interface Paginated<Type> {
 
 export interface ObjectValueOf<T> {
  [key: string]: T
+}
+
+export interface UploadSingleFile {
+  (context: Context, key: string, file: Buffer): Promise<void>
+}
+export interface UploadBulkFiles {
+  (context: Context, key: string, files: Buffer[]): Promise<void>
 }

@@ -8,11 +8,11 @@ export default class DriverDefault implements Driver {
 
   private r: Registry
   constructor(){
-    this.configProvider= new Config()
-    this.r = new RegistryDefault(this.c)
+    this.configProvider = new Config()
+    this.r = new RegistryDefault(this.configProvider)
   }
   configuration(): ConfigProvider {
-    return this.c
+    return this.configProvider
   }
   registry(): Registry {
     return this.r

@@ -13,6 +13,10 @@ export const NotFoundError = (message: string, error?: Error) => {
   return new HttpError(404, message, error)
 }
 
+export const ExistsError = (message: string, error?: Error) => {
+  return new HttpError(409, message, error)
+}
+
 export const UnauthenticatedError = (message: string, error?: Error) => {
   return new HttpError(401, message, error)
 }
@@ -31,4 +35,8 @@ export const BadGatewayError = (message: string, error?: Error) => {
 
 export const PrecondtionError = (message: string, error?: Error) => {
   return new HttpError(406, message, error)
+}
+
+export const BadRequestError = (message: string, error?: Error) => {
+  return new HttpError(400, message, error)
 }

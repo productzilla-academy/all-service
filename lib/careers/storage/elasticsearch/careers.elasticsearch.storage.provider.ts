@@ -6,9 +6,8 @@ export default class CareerElasticsearchProvider implements CareerManager {
   configProvider: ConfigProvider
 
 
-  constructor(configProvider: ConfigProvider
-){
-    this.configProviderconfigProvider
+  constructor(configProvider: ConfigProvider){
+    this.configProvider = configProvider
   }
   
   createCareer(context: Context, career: Career): Promise<void> {

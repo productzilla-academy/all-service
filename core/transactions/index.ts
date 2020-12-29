@@ -1,1 +1,1 @@
-export {default} from './transaction.manager' 
+export { default } from './transaction.manager' 

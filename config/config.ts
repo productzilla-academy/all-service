@@ -15,6 +15,14 @@ export interface ConfigProvider {
   dsn(): string
   traccer(): Tracer
   dsnProtocol(): string
+  
   objectStorageURL(): string
+  objectStorageAccessKey(): string
+  objectStorageSecretKey(): string
+
   elasticsearchURL(): string
+  elasticsearchUsername(): string
+  elasticsearchPassword(): string
+
+  getProtocol(d: string): string
 }

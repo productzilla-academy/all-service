@@ -75,6 +75,21 @@ export class Config implements ConfigProvider {
   traccer(): Tracer {
     throw new Error('Method not implemented.')
   }
+  objectStorageAccessKey(): string {
+    throw new Error('Method not implemented.')
+  }
+  objectStorageSecretKey(): string {
+    throw new Error('Method not implemented.')
+  }
+  elasticsearchUsername(): string {
+    throw new Error('Method not implemented.')
+  }
+  elasticsearchPassword(): string {
+    throw new Error('Method not implemented.')
+  }
+  getProtocol(d: string): string {
+    throw new Error('Method not implemented.')
+  }
 }
 
 export default ConfigProvider

@@ -31,8 +31,8 @@ export const tables = {
 export const SQLConnection = (configProvider: ConfigProvider
 ) => {
   if(SQLConn) return SQLConn
-  let client = c.dsnProtocol()
-  let connection = c.dsn()
+  let client = configProvider.dsnProtocol()
+  let connection = configProvider.dsn()
   SQLConn = knex({
     client,
     connection,

@@ -1,5 +1,5 @@
 import Context from "../../context";
-import { ObjectValueOf, Paginated, PaginationParam } from "../core.types";
+import { ObjectValueOf, Paginated, PaginationParam, UploadBulkFiles, UploadSingleFile } from "../core.types";
 import Course, { CourseQueryParam } from "./course";
 import Module from "./course.modules";
 import Quiz from "./course.quiz";
@@ -11,7 +11,7 @@ export interface Param<T> {
   search: T
 }
 
-export default interface CourseManager {
+export interface CourseStorageManager {
   fetchCourses(context: Context, param: Param<CourseQueryParam>): Promise<Paginated<Course[]>>
   getCourse(context: Context, courseUUID: string): Promise<Course>
   checkCoursesLinkPath(context: Context, linkPath: string): Promise<void>
@@ -39,8 +39,32 @@ export default interface CourseManager {
   getModuleQuizQuestions(context: Context, courseUUID: string, moduleUUID: string, quizUUID: string, questionUUID: string): Promise<Question>
   createModuleQuizQuestions(context: Context, courseUUID: string, moduleUUID: string, quizUUID: string, question: Question): Promise<Question>
   updateModuleQuizQuestions(context: Context, courseUUID: string, moduleUUID: string, quizUUID: string, questionUUID: string, question: Question): Promise<Question>
-  deleteModuleQuizQuestions(context: Context, courseUUID: string, moduleUUID: string, quizUUID: string, questionUUID: string, question: Question): Promise<Question>
+  deleteModuleQuizQuestions(context: Context, courseUUID: string, moduleUUID: string, quizUUID: string, questionUUID: string): Promise<Question>
 
   fetchModuleQuizQuestionOptions(context, courseUUID: string, moduleUUID: string, quizUUID: string, questionUUID: string): Promise<Options[]>
-  updateModuleQuizQuestionOptions(context: Context, courseUUID: string, moduleUUID: string, quizUUID: string, questionUUID: string, options: Options): Promise<Options[]>
+  updateModuleQuizQuestionOptions(context: Context, courseUUID: string, moduleUUID: string, quizUUID: string, questionUUID: string, options: Options[]): Promise<Options[]>
+}
+
+
+export interface CourseObjectStorageManager {
+  changeCourseCover(context: Context, courseUUID: string, cover: Buffer): Promise<void>
+  pipeCourseCover(context: Context, courseUUID: string, pipe: any): void
+  uploadCourseFile(context: Context, courseUUID: string, file: Buffer, filename: string): Promise<void>
+  deleteCourseFile(context: Context, couresUUID: string, objectID: string): Promise<void>
+  fetchCourseFiles(context: Context, courseUUID: string): Promise<string[]>
+  pipeCourseFile(context: Context, courseUUID: string, fileName: string, pipe: any): void
+
+  uploadModuleCover (context: Context, courseUUID: string, moduleUUID: string, cover: Buffer): Promise<void>
+  pipeModuleCover (context: Context, courseUUID: string, moduleUUID: string, pipe: any): void
+  
+  uploadModuleFile(context: Context, courseUUID: string, moduleUUID: string, file: Buffer, filename: string): Promise<void>
+  fetchModuleFiles (context: Context, courseUUID: string, moduleUUID: string): Promise<string[]>
+  deleteModuleFile (context: Context, courseUUID: string, moduleUUID: string, objectID: string): Promise<void>
+  pipeModuleFile(context: Context, courseUUID: string, moduleUUID: string, fileName: string, pipe: any): void
+
+}
+
+export default interface CourseManager {
+  objectStorage(): CourseObjectStorageManager
+  storage(): CourseStorageManager
 }
