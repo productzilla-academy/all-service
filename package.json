@@ -30,6 +30,7 @@
     "mysql": "^2.18.1",
     "opentracing": "^0.14.5",
     "pino": "^6.7.0",
+    "swagger-ui-express": "^4.1.6",
     "ts-node": "^9.0.0",
     "ts-node-dev": "^1.0.0",
     "typescript": "^4.0.3",
@@ -38,9 +39,9 @@
   "devDependencies": {},
   "scripts": {
     "test": "mocha -r ts-node/register tests/**/*.test.ts",
-    "migrate": "ts-node app.ts migrate",
-    "dev": "ts-node-dev app.ts serve",
-    "start": "ts-node app.ts serve"
+    "migrate": "ts-node bin/app.ts migrate",
+    "dev": "ts-node-dev bin/app.ts serve",
+    "start": "ts-node bin/app.ts serve"
   },
   "author": "",
   "license": "ISC"

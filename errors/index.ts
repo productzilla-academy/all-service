@@ -40,3 +40,7 @@ export const PrecondtionError = (message: string, error?: Error) => {
 export const BadRequestError = (message: string, error?: Error) => {
   return new HttpError(400, message, error)
 }
+
+export const DuplicateError = (message: string, error?: Error) => {
+  return new HttpError(409, message, error)
+}

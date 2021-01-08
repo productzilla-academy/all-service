@@ -9,13 +9,14 @@ export const up = (knex: Knex, promise: Promise<any>) => {
     table.dateTime('created').notNullable().defaultTo(knex.fn.now())
     table.dateTime('updated').notNullable().defaultTo(knex.fn.now())
     
-    table.json(`billing_plan`).defaultTo('{}')
+    table.bigInteger('course')
+//.references(`${tables.INDEX_TABLE_COURSES}.id`)
     table.string(`student`, 255).notNullable()
-    table.date(`open`).notNullable().defaultTo(knex.fn.now())
+    table.dateTime(`open`).notNullable().defaultTo(knex.fn.now())
     table.dateTime(`expire`).nullable().defaultTo(null)
   })
 }
 
 export const down = (knex: Knex, promise: Promise<any>) => {
-  return knex.schema.dropTable(tables.INDEX_TABLE_ENROLLMENTS);
+  return knex.schema.dropTable(tables.INDEX_TABLE_ENROLLMENTS)
 }

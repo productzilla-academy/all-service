@@ -5,7 +5,6 @@ import CareerManager, { Career, Level } from "../../../../core/careers";
 export default class CareerElasticsearchProvider implements CareerManager {
   configProvider: ConfigProvider
 
-
   constructor(configProvider: ConfigProvider){
     this.configProvider = configProvider
   }

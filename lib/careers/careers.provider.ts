@@ -1,0 +1,1 @@
+export { default } from './storage/careers.storage.provider'

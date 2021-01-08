@@ -10,7 +10,7 @@ export const up = (knex: Knex, promise: Promise<any>) => {
     table.dateTime('created').notNullable().defaultTo(knex.fn.now())
     table.dateTime('updated').notNullable().defaultTo(knex.fn.now())
     
-    table.json(`billing_plan`).defaultTo('{}')
+    table.text(`billing_plan`).defaultTo('{}')
     table.double('amount').defaultTo(0)
     table.string(`student`, 255).notNullable()
     table.string(`code`, 255).notNullable()

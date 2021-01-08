@@ -1,7 +1,7 @@
 import ConfigProvider from "../../../../config"
 import Context from "../../../../context"
-import { Paginated } from "../../../../core/core.types"
-import { Certificate, Course, CourseQueryParam, CourseStorageManager, Module, Options, Param, Question, Quiz } from "../../../../core/courses"
+import { Paginated, Param } from "../../../../core/core.types"
+import { Certificate, Course, CourseQueryParam, CourseStorageManager, HerarcialModule, Module, Options, Question, Quiz } from "../../../../core/courses"
 
 export default class CourseElasticsearchProvider implements CourseStorageManager {
   configProvider: ConfigProvider
@@ -9,6 +9,9 @@ export default class CourseElasticsearchProvider implements CourseStorageManager
 
   constructor(configProvider: ConfigProvider){
     this.configProvider = configProvider
+  }
+  herarcialModules(context: Context, courseUUID: string): Promise<HerarcialModule[]> {
+    throw new Error("Method not implemented.")
   }
   fetchCourses(context: Context, param: Param<CourseQueryParam>): Promise<Paginated<Course[]>> {
     throw new Error("Method not implemented.")
@@ -29,6 +32,12 @@ export default class CourseElasticsearchProvider implements CourseStorageManager
     throw new Error("Method not implemented.")
   }
   getResultCertificate(context: Context, courseUUID: string): Promise<Certificate> {
+    throw new Error("Method not implemented.")
+  }
+  fetchResultCertificate(context: Context, courseUUID: string): Promise<Certificate[]> {
+    throw new Error("Method not implemented.")
+  }
+  updateResultCertificate(context: Context, courseUUID: string, certificateUUID: string, certificate: Certificate): Promise<Certificate> {
     throw new Error("Method not implemented.")
   }
   createResultCertificate(context: Context, courseUUID: string, certificate: Certificate): Promise<Certificate> {

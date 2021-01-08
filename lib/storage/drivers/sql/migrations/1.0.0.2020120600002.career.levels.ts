@@ -8,7 +8,9 @@ export const up = (knex: Knex, promise: Promise<any>) => {
     table.string('name', 100).notNullable()
     table.text('description').notNullable()
     table.integer('number').notNullable()
-    table.foreign('career').references(`${tables.INDEX_TABLE_CAREERS}.id`)
+
+    table.bigInteger('career').notNullable()
+//.references(`${tables.INDEX_TABLE_CAREERS}.id`)
     table.dateTime('created').notNullable().defaultTo(knex.fn.now())
   })
 }

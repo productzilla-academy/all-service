@@ -1,3 +1,27 @@
 {
+  "listen": {
+    "port": "LISTEN_PORT",
+    "host": "LISTEN_HOST"
+  },
+
+  "objectstorage": {
+    "url": "OBJECT_STORAGE_URL",
+    "access_key": "OBJECT_STORAGE_ACCESS_KEY",
+    "secret_key": "OBJECT_STORAGE_SECRET_KEY"
+  },
+
+  "elasticsearch": {
+    "url": "ELASTICSEARCH_URL",
+    "auth": {
+      "username": "ELASTICSEARCH_AUTH_USERNAME",
+      "password": "ELASTICSEARCH_AUTH_PASSWORD"
+    }
+  },
   
+  "jaeger.url": {
+    "url": "JAEGER_URL",
+    "sampler": "JAEGER_SAMPLER",
+    "const": "JAEGER_CONST"
+  },
+  "DSN": "DSN"
 }

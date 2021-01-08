@@ -19,5 +19,4 @@ export default class CourseProvider implements CourseManager{
     return this.st
   }
 
-
 }

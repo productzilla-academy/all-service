@@ -15,7 +15,8 @@ export const up = (knex: Knex, promise: Promise<any>) => {
     table.text('overview').notNullable()
     table.string('link_path', 100).unique()
 
-    table.foreign('module').references(`${tables.INDEX_TABLE_MODULES}.id`)
+    table.bigInteger('module')
+//.references(`${tables.INDEX_TABLE_MODULES}.id`)
   })
 }
 

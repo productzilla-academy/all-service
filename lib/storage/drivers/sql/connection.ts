@@ -28,8 +28,7 @@ export const tables = {
   INDEX_TABLE_LEARN_PROCESS,
   INDEX_TABLE_QUIZ_ANSWER
 }
-export const SQLConnection = (configProvider: ConfigProvider
-) => {
+export const SQLConnection = (configProvider: ConfigProvider) => {
   if(SQLConn) return SQLConn
   let client = configProvider.dsnProtocol()
   let connection = configProvider.dsn()
@@ -43,5 +42,6 @@ export const SQLConnection = (configProvider: ConfigProvider
   })
   return SQLConn
 }
+
 
 export default SQLConnection

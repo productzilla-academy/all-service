@@ -9,7 +9,8 @@ export const up = (knex: Knex, promise: Promise<any>) => {
     table.dateTime('created').notNullable().defaultTo(knex.fn.now())
     table.dateTime('updated').notNullable().defaultTo(knex.fn.now())
     
-    table.foreign(`course`).references(`${tables.INDEX_TABLE_COURSES}.id`)
+    table.bigInteger(`course`)
+//.references(`${tables.INDEX_TABLE_COURSES}.id`)
     table.double(`weight_goal`).notNullable()
     table.text(`format`).notNullable()
     table.string(`caption`, 255).notNullable()

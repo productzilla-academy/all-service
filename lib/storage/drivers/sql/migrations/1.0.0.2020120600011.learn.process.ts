@@ -9,7 +9,8 @@ export const up = (knex: Knex, promise: Promise<any>) => {
     table.dateTime('created').notNullable().defaultTo(knex.fn.now())
     table.dateTime('updated').notNullable().defaultTo(knex.fn.now())
     
-    table.foreign(`module`).references(`${tables.INDEX_TABLE_MODULES}.id`)
+    table.bigInteger(`module`)
+//.references(`${tables.INDEX_TABLE_MODULES}.id`)
     table.string(`student`, 255).notNullable()
     table.float(`process`).notNullable().defaultTo(0)
   })

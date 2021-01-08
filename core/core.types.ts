@@ -10,10 +10,10 @@ import Assets from "./assets/asset";
 
 // }
 export interface Generic {
-  id: number
+  id?: number
   uuid: string 
-  created: Date
-  updated: string
+  created?: Date
+  updated?: string
 }
 
 export interface Resource {
@@ -25,8 +25,8 @@ export interface Resource {
 export interface General extends Generic{
   name: string
   description: string
-  overview: string
-  link_path: string
+  overview?: string
+  link_path?: string
 }
 
 export interface PaginationParam {
@@ -40,7 +40,7 @@ export interface Pagination extends PaginationParam {
 }
 
 export interface Paginated<Type> {
-  pagiation: Pagination
+  pagination: Pagination
   data: Type
 }
 
@@ -53,4 +53,9 @@ export interface UploadSingleFile {
 }
 export interface UploadBulkFiles {
   (context: Context, key: string, files: Buffer[]): Promise<void>
+}
+
+export interface Param<T> {
+  pagination?: PaginationParam
+  search?: T
 }

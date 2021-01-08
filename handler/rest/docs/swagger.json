@@ -1,0 +1,1565 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "description": "Rest API of product zilla academy",
+    "title": "ProductZilla Academy Core service.",
+    "contact": {
+      "name": "echaoeoen",
+      "email": "andyepso@gmail.com"
+    },
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/careers": {
+      "post": {
+        "tags": [
+          "job"
+        ],
+        "description": "Create new career data",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/CareerCreateRequestBody"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Career"
+          }
+        }
+      },
+      "get": {
+        "description": "Fetch all career data",
+        "tags": [
+          "job"
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/FetchCareer"
+          }
+        }
+      }
+    },
+    "/careers/{career_name}": {
+      "delete": {
+        "description": "Delete career data",
+        "tags": [
+          "job"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "career_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/components/responses/Career"
+          }
+        }
+      }
+    },
+    "/careers/{career_name}/levels": {
+      "get": {
+        "tags": [
+          "job"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "career_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "description": "Fetch career job level by career name",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/CareerLevelsResponse"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "job"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "career_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/CareerLevelRequestBody"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Message"
+          }
+        }
+      }
+    },
+    "/careers/{career_name}/levels/{level_id}": {
+      "delete": {
+        "tags": [
+          "job"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "career_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "level_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Message"
+          }
+        }
+      }
+    },
+    "/courses": {
+      "get": {
+        "description": "Fetch all course data",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tutor",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "level",
+            "description": "level uuid",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "description": "Status:\n * `0` - Waiting status\n * `1` - Published on LMS portal\n * `2` - Returned to creator\n * `3` - Deactivated / Hidden on LMS Portal          \n",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "course"
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/PaginatedCourse"
+          }
+        }
+      }
+    },
+    "/courses/{course_uuid}/modules": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "course"
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/CourseModuleList"
+          }
+        }
+      }
+    },
+    "/courses/{course_uuid}/modules/herarcial": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "course"
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/CourseModuleHerarcial"
+          }
+        }
+      }
+    },
+    "/courses/{course_uuid}/modules/{module_uuid}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "module_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "course"
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/CourseModule"
+          }
+        }
+      }
+    },
+    "/careers/{career_name}/courses": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "career_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "description": "Fetch all course by career career",
+        "tags": [
+          "course"
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/CourseByCareerLevelResponse"
+          }
+        }
+      }
+    },
+    "/tutor/{tutor_name}/courses": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "level",
+            "description": "level uuid",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Status:\n * `0` - Waiting status\n * `1` - Published on LMS portal\n * `2` - Returned to creator\n * `3` - Deactivated / Hidden on LMS Portal\n"
+          }
+        ],
+        "tags": [
+          "course"
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/PaginatedCourse"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "course"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/CourseRequestBody"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/CourseResponse"
+          }
+        }
+      }
+    },
+    "/tutor/{tutor_name}/courses/{course_uuid}": {
+      "put": {
+        "tags": [
+          "course"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/CourseRequestBody"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/CourseResponse"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "course"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/CourseResponse"
+          }
+        }
+      }
+    },
+    "/courses/{course_uuid}/certificates": {
+      "get": {
+        "tags": [
+          "Certificate Format"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/CourseArrayCertificateResponse"
+          }
+        }
+      }
+    },
+    "/tutor/{tutor_name}/courses/{course_uuid}/certificates": {
+      "get": {
+        "tags": [
+          "Certificate Format"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/CourseArrayCertificateResponse"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Certificate Format"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/CertificateRequestBody"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/CourseCertificateResponse"
+          }
+        }
+      }
+    },
+    "/courses/{course_uuid}/certificates/{certificate_uuid}": {
+      "get": {
+        "tags": [
+          "Certificate Format"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "certificate_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/CourseCertificateResponse"
+          }
+        }
+      }
+    },
+    "/tutor/{tutor_name}/courses/{course_uuid}/certificates/{certificate_uuid}": {
+      "get": {
+        "tags": [
+          "Certificate Format"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "certificate_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/CourseCertificateResponse"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Certificate Format"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "certificate_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/CertificateRequestBody"
+        },
+        "responses": {
+          "202": {
+            "$ref": "#/components/responses/CourseCertificateResponse"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Certificate Format"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "certificate_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/components/responses/CourseCertificateResponse"
+          }
+        }
+      }
+    },
+    "/tutor/{tutor_name}/courses/{course_uuid}/modules": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "course"
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/CourseModuleList"
+          }
+        }
+      },
+      "post": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "course"
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/CourseModuleRequestBody"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/CourseModule"
+          }
+        }
+      }
+    },
+    "/tutor/{tutor_name}/courses/{course_uuid}/modules/herarcial": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "course"
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/CourseModuleHerarcial"
+          }
+        }
+      }
+    },
+    "/tutor/{tutor_name}/courses/{course_uuid}/modules/{module_uuid}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "module_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "course"
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/CourseModule"
+          }
+        }
+      },
+      "put": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "module_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "course"
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/CourseModuleRequestBody"
+        },
+        "responses": {
+          "202": {
+            "$ref": "#/components/responses/CourseModule"
+          }
+        }
+      },
+      "delete": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "module_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "course"
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/CourseModule"
+          }
+        }
+      }
+    },
+    "/tutor/{tutor_name}/courses/{course_uuid}/modules/{module_uuid}/quizes": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "module_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "course",
+          "provision"
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/QuizResponse"
+          }
+        }
+      },
+      "post": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "module_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "course",
+          "provision"
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/QuizRequestBody"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/QuizResponse"
+          }
+        }
+      },
+      "put": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "module_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "course",
+          "provision"
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/QuizRequestBody"
+        },
+        "responses": {
+          "202": {
+            "$ref": "#/components/responses/QuizResponse"
+          }
+        }
+      },
+      "delete": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "module_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "course",
+          "provision"
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/components/responses/QuizResponse"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "responses": {
+      "Message": {
+        "description": "Content",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Message"
+            }
+          }
+        }
+      },
+      "Career": {
+        "description": "Content",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Career"
+            }
+          }
+        }
+      },
+      "FetchCareer": {
+        "description": "Content",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Career"
+              }
+            }
+          }
+        }
+      },
+      "CareerLevelsResponse": {
+        "description": "Career Level request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/CareerLevel"
+              }
+            }
+          }
+        }
+      },
+      "CareerLevelResponse": {
+        "description": "Career Level request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CareerLevel"
+            }
+          }
+        }
+      },
+      "PaginatedCourse": {
+        "description": "Paginated Course",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PaginatedCourse"
+            }
+          }
+        }
+      },
+      "CourseResponse": {
+        "description": "Course Level request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Course"
+            }
+          }
+        }
+      },
+      "CourseByCareerLevelResponse": {
+        "description": "Courses by career",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CourseByCareerLevelResponse"
+            }
+          }
+        }
+      },
+      "CourseCertificateResponse": {
+        "description": "Course Response",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CourseCertificate"
+            }
+          }
+        }
+      },
+      "CourseArrayCertificateResponse": {
+        "description": "Course Response",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/CourseCertificate"
+              }
+            }
+          }
+        }
+      },
+      "CourseModule": {
+        "description": "Course Module Response",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CourseModule"
+            }
+          }
+        }
+      },
+      "CourseModuleList": {
+        "description": "Course Module List Response",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CourseModuleList"
+            }
+          }
+        }
+      },
+      "CourseModuleHerarcial": {
+        "description": "Course Herarcial Module Response",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/HerarcialModule"
+            }
+          }
+        }
+      },
+      "QuizResponse": {
+        "description": "Quiz Response",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Quiz"
+            }
+          }
+        }
+      }
+    },
+    "requestBodies": {
+      "CareerCreateRequestBody": {
+        "description": "Career request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Career"
+            }
+          }
+        }
+      },
+      "CareerLevelRequestBody": {
+        "description": "Career Level request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CareerLevelRequestBody"
+            }
+          }
+        }
+      },
+      "CourseRequestBody": {
+        "description": "Course Level request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CourseRequestBody"
+            }
+          }
+        }
+      },
+      "CertificateRequestBody": {
+        "description": "Certificate request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CourseCertificateRequestBody"
+            }
+          }
+        }
+      },
+      "CourseModuleRequestBody": {
+        "description": "Course Module request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CourseModuleRequestBody"
+            }
+          }
+        }
+      },
+      "QuizRequestBody": {
+        "description": "Course Module request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/QuizRequestBody"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Message": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "Paginated": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "number"
+          },
+          "size": {
+            "type": "number"
+          },
+          "total_page": {
+            "type": "number"
+          },
+          "total_size": {
+            "type": "number"
+          }
+        }
+      },
+      "Generic": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "updated": {
+            "type": "string"
+          },
+          "created": {
+            "type": "string"
+          }
+        }
+      },
+      "General": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "overview": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "Course": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Generic"
+          },
+          {
+            "$ref": "#/components/schemas/CourseRequestBody"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "cover": {
+                "type": "string"
+              },
+              "tutor": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "CourseRequestBody": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/General"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "level": {
+                "type": "object",
+                "properties": {
+                  "uuid": {
+                    "type": "string"
+                  }
+                }
+              },
+              "number": {
+                "type": "number",
+                "description": "Number of level sort"
+              },
+              "status": {
+                "type": "number",
+                "enum": [
+                  0,
+                  1,
+                  2,
+                  3
+                ],
+                "description": "Status:\n * `0` - Waiting status\n * `1` - Published on LMS portal\n * `2` - Returned to creator\n * `3` - Deactivated / Hidden on LMS Portal\n"
+              },
+              "open": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        ]
+      },
+      "PaginatedCourse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Paginated"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Course"
+              }
+            }
+          }
+        ]
+      },
+      "Career": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of career * (-) separated"
+          }
+        }
+      },
+      "CareerLevel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Generic"
+          },
+          {
+            "$ref": "#/components/schemas/CareerLevelRequestBody"
+          }
+        ]
+      },
+      "CareerLevelRequestBody": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/General"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "career": {
+                "$ref": "#/components/schemas/Career"
+              },
+              "number": {
+                "type": "number",
+                "description": "Number of sorting level"
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "CourseByCareerLevelResponse": {
+        "type": "array",
+        "items": {
+          "properties": {
+            "level": {
+              "$ref": "#/components/schemas/CareerLevel"
+            },
+            "courses": {
+              "$ref": "#/components/schemas/PaginatedCourse"
+            }
+          }
+        }
+      },
+      "CourseCertificateRequestBody": {
+        "type": "object",
+        "properties": {
+          "weight_goal": {
+            "type": "number",
+            "description": "Number of goal"
+          },
+          "caption": {
+            "type": "string",
+            "description": "Caption of certificate"
+          },
+          "format": {
+            "type": "string",
+            "description": "format of certificate page"
+          }
+        }
+      },
+      "CourseCertificate": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Generic"
+          },
+          {
+            "$ref": "#/components/schemas/CourseCertificateRequestBody"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "course": {
+                "$ref": "#/components/schemas/Course"
+              }
+            }
+          }
+        ]
+      },
+      "CourseModuleRequestBody": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/General"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "content": {
+                "type": "string"
+              },
+              "number": {
+                "type": "number"
+              },
+              "weight": {
+                "type": "number"
+              },
+              "parent_module": {
+                "type": "string",
+                "description": "Module uuid"
+              }
+            }
+          }
+        ]
+      },
+      "CourseModule": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Generic"
+          },
+          {
+            "$ref": "#/components/schemas/CourseModuleRequestBody"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "course": {
+                "$ref": "#/components/schemas/Course"
+              },
+              "sub_module_count": {
+                "type": "number"
+              }
+            }
+          }
+        ]
+      },
+      "CourseModuleList": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "uuid": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "sub_module_count": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      "HerarcialModule": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "sub_modules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HerarcialModule"
+            }
+          }
+        }
+      },
+      "QuizRequestBody": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "Quiz": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Generic"
+          },
+          {
+            "$ref": "#/components/schemas/QuizRequestBody"
+          }
+        ]
+      },
+      "QuizQuestionRequest": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "number"
+          },
+          "type": {
+            "type": "string",
+            "description": "QuestionType:\n * `multiple_choise`\n * `essay`\n",
+            "default": "multiple_choise"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,8 +1,7 @@
-import { Transaction } from "knex";
 import Context from "../../context";
 import { Paginated, Pagination } from "../core.types";
 import { BillingPlan } from "./billing";
-import { TransactionStatus } from "./transaction";
+import Transaction, { TransactionStatus } from "./transaction";
 export default interface TransactionManager {
   create(context: Context, transaction: Transaction): Promise<void>
   fetch(context: Context, pagination: Pagination): Promise<Paginated<Transaction[]>>

@@ -12,7 +12,7 @@ export default class MinioObjectStorageProvider implements ObjectStorageProvider
     this.configProvider = configProvider
     this.minioClient = new Client(
       {
-        endPoint: configProvider.objectStorageURL(),
+        endPoint: configProvider.objectStorageURL().replace('minio://', ''),
         accessKey: configProvider.objectStorageAccessKey(),
         secretKey: configProvider.objectStorageSecretKey()
       }

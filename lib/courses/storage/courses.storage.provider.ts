@@ -1,11 +1,11 @@
 import ConfigProvider from "../../../config"
 import Context from "../../../context"
-import { Paginated } from "../../../core/core.types"
-import { Certificate, Course, CourseQueryParam, CourseStorageManager, Module, Options, Param, Question, Quiz } from "../../../core/courses"
+import { Paginated, Param } from "../../../core/core.types"
+import { Certificate, Course, CourseQueryParam, CourseStorageManager, HerarcialModule, Module, Options, Question, Quiz } from "../../../core/courses"
 import { SQLDBProtocols } from "../../storage/storage.types"
 import CourseElasticsearchProvider from "./elasticsearch/course.elasticsearch.storage.provider"
 import CourseSQLStorageProvider from "./sql"
-import UUID from 'uuid'
+import * as UUID from 'uuid'
 
 export class CourseStorageProvider implements CourseStorageManager{
   configProvider: ConfigProvider
@@ -15,12 +15,14 @@ export class CourseStorageProvider implements CourseStorageManager{
   
   constructor(configProvider: ConfigProvider){
     this.configProvider = configProvider
-    this.coldDB = SQLDBProtocols.indexOf(this.configProvider.dsnProtocol()) ? new CourseSQLStorageProvider(configProvider): null 
+    this.coldDB = SQLDBProtocols.indexOf(this.configProvider.dsnProtocol()) >= 0 ? new CourseSQLStorageProvider(configProvider): null 
     this.hotDB = !configProvider.elasticsearchURL() ? null : new CourseElasticsearchProvider(configProvider)
   }
+  herarcialModules(context: Context, courseUUID: string): Promise<HerarcialModule[]> {
+    return this.hotDB ? this.hotDB.herarcialModules(context, courseUUID) : this.coldDB.herarcialModules(context, courseUUID)
+  }
   fetchCourses(context: Context, param: Param<CourseQueryParam>): Promise<Paginated<Course[]>> {
-    if(this.hotDB) return this.hotDB.fetchCourses(context, param)
-    return this.coldDB.fetchCourses(context, param)
+    return this.hotDB && this.hotDB.fetchCourses(context, param) || this.coldDB.fetchCourses(context, param)
   }
   getCourse(context: Context, courseUUID: string): Promise<Course> {
     if(this.hotDB) return this.hotDB.getCourse(context, courseUUID)
@@ -30,7 +32,7 @@ export class CourseStorageProvider implements CourseStorageManager{
     throw new Error("Method not implemented.")
   }
   async createCourse(context: Context, course: Course): Promise<Course> {
-    const uuid = UUID.v5(course.tutor, UUID.v5.URL)
+    const uuid = UUID.v5(course.tutor + course.name, UUID.v5.URL)
     course.uuid = uuid
     const f: Promise<Course>[] = [this.coldDB.createCourse(context, course)]
     if(this.hotDB) f.push(this.hotDB.createCourse(context, course))
@@ -49,12 +51,22 @@ export class CourseStorageProvider implements CourseStorageManager{
     const [ c ] = await Promise.all(f)
     return c
   }
-  getResultCertificate(context: Context, courseUUID: string): Promise<Certificate> {  
-    if(this.hotDB) return this.hotDB.getResultCertificate(context, courseUUID)
-    return this.coldDB.getResultCertificate(context, courseUUID)
+  getResultCertificate(context: Context, courseUUID: string, certificateUUID: string): Promise<Certificate> {  
+    if(this.hotDB) return this.hotDB.getResultCertificate(context, courseUUID, certificateUUID)
+    return this.coldDB.getResultCertificate(context, courseUUID, certificateUUID)
+  }
+  fetchResultCertificate(context: Context, courseUUID: string): Promise<Certificate[]> {
+    if(this.hotDB) return this.hotDB.fetchResultCertificate(context, courseUUID)
+    return this.coldDB.fetchResultCertificate(context, courseUUID)
+  }
+  async updateResultCertificate(context: Context, courseUUID: string, certificateUUID: string, certificate: Certificate): Promise<Certificate> {
+    const f: Promise<Certificate>[] = [this.coldDB.updateResultCertificate(context, courseUUID, certificateUUID, certificate)]
+    if(this.hotDB) f.push(this.hotDB.updateResultCertificate(context, courseUUID, certificateUUID, certificate))
+    await Promise.all(f)
+    return certificate
   }
   async createResultCertificate(context: Context, courseUUID: string, certificate: Certificate): Promise<Certificate> {
-    const uuid = UUID.v5(courseUUID, UUID.v5.URL)
+    const uuid = UUID.v5(courseUUID + certificate.caption, UUID.v5.URL)
     certificate = {
       ...certificate,
       uuid,
@@ -64,9 +76,9 @@ export class CourseStorageProvider implements CourseStorageManager{
     await Promise.all(f)
     return certificate
   }
-  async deleteResultCertificate(context: Context, courseUUID: string): Promise<Certificate> {
-    const f: Promise<Certificate>[] = [this.coldDB.deleteResultCertificate(context, courseUUID)]
-    if(this.hotDB) f.push(this.hotDB.deleteResultCertificate(context, courseUUID))
+  async deleteResultCertificate(context: Context, courseUUID: string, certificateUUID: string): Promise<Certificate> {
+    const f: Promise<Certificate>[] = [this.coldDB.deleteResultCertificate(context, courseUUID, certificateUUID)]
+    if(this.hotDB) f.push(this.hotDB.deleteResultCertificate(context, courseUUID, certificateUUID))
     const [ c ] = await Promise.all(f)
     return c
   }
@@ -82,7 +94,7 @@ export class CourseStorageProvider implements CourseStorageManager{
     throw new Error("Method not implemented.")
   }
   async createModule(context: Context, courseUUID: string, module: Module): Promise<Module> {
-    const uuid = UUID.v5(courseUUID, UUID.v5.URL)
+    const uuid = UUID.v5(courseUUID + module.name, UUID.v5.URL)
     module.uuid = uuid
     const f: Promise<Module>[] = [this.coldDB.createModule(context, courseUUID, module)]
     if(this.hotDB) f.push(this.hotDB.createModule(context, courseUUID, module))
@@ -106,7 +118,7 @@ export class CourseStorageProvider implements CourseStorageManager{
     return this.coldDB.getModuleQuiz(context, courseUUID, moduleUUID)
   }
   async createModuleQuiz(context: Context, courseUUID: string, moduleUUID: string, quiz: Quiz): Promise<Quiz> {
-    const uuid = UUID.v5(moduleUUID, UUID.v5.URL)
+    const uuid = UUID.v5(moduleUUID + quiz.name, UUID.v5.URL)
     quiz.uuid = uuid
     const f: Promise<Quiz>[] = [this.coldDB.createModuleQuiz(context, courseUUID, moduleUUID, quiz)]
     if(this.hotDB) f.push(this.hotDB.createModuleQuiz(context, courseUUID, moduleUUID, quiz))
@@ -134,7 +146,7 @@ export class CourseStorageProvider implements CourseStorageManager{
     return this.coldDB.getModuleQuizQuestions(context, courseUUID, moduleUUID, quizUUID, questionUUID)
   }
   async createModuleQuizQuestions(context: Context, courseUUID: string, moduleUUID: string, quizUUID: string, question: Question): Promise<Question> {
-    const uuid = UUID.v5(quizUUID, UUID.v5.URL)
+    const uuid = UUID.v5(quizUUID + question.question, UUID.v5.URL)
     question.uuid = uuid
     const f: Promise<Question>[] = [this.coldDB.createModuleQuizQuestions(context, courseUUID, moduleUUID, quizUUID, question)]
     if(this.hotDB) f.push(this.hotDB.createModuleQuizQuestions(context, courseUUID, moduleUUID, quizUUID, question))

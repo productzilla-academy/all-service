@@ -13,7 +13,7 @@ export const up = (knex: Knex, promise: Promise<any>) => {
     table.bigInteger(`price`).defaultTo(0)
     table.enum('subscription_type', [SubscriptionType.FREE, SubscriptionType.ONE_TIME, SubscriptionType.SUBSCRIPTION])
     table.integer('month_duration').defaultTo(0)
-    table.json('courses').defaultTo([])
+    table.text('courses').defaultTo('')
     table.string(`description`, 255)
   })
 }

@@ -1,3 +1,27 @@
 {
+  "listen": {
+    "port": 1321,
+    "host": "0.0.0.0"
+  },
+
+  "objectstorage": {
+    "url": "minio://minio.io",
+    "access_key": "",
+    "secret_key": ""
+  },
+
+  "elasticsearch": {
+    "url": null,
+    "auth": {
+      "username": "",
+      "password": ""
+    }
+  },
   
+  "jaeger.url": {
+    "url": null,
+    "sampler": null,
+    "const": null
+  },
+  "dsn": "mysql://root:himed@127.0.0.1:55559/product_zilla"
 }

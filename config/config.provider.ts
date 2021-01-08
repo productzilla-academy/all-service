@@ -1,18 +1,24 @@
 import config from 'config'
 import { Tracer } from 'opentracing'
 import pino, { BaseLogger } from 'pino'
+import { URL } from 'url'
 import { ConfigProvider } from './config'
 
 export const [
   keyListenPort,
   keyListenHost,
-  keyDefaultSender,
+
+  keyDSN,
 
   appName,
 
   keyObjectStorageURL,
+  keyObjectAccess,
+  keyObjectSecret,
 
   keyElasticearchURL,
+  keyElasticearchUsername,
+  keyElasticearchPassword,
 
   keyJaegerURL,
   keyJaegerSampler,
@@ -20,13 +26,17 @@ export const [
 ] = [
   'listen.port',
   'listen.host',
-  'default.sender',
+  'dsn',
 
   'productzilla-core-system',
 
   'objectstorage.url',
+  'objectstorage.access_key',
+  'objectstorage.secret_key',
 
   'elasticsearch.url',
+  'elasticsearch.auth.username',
+  'elasticsearch.auth_password',
 
   'jaeger.url',
   'jaeger.sampler',
@@ -57,38 +67,35 @@ export class Config implements ConfigProvider {
   appName(): string {
     return appName
   }
-  defaultSender(): string {
-    return config.get(keyDefaultSender)
-  }
   objectStorageURL(): string {
-    throw new Error('Method not implemented.')
+    return config.get(keyObjectStorageURL)
   }
   elasticsearchURL(): string {
-    throw new Error('Method not implemented.')
+    return config.get(keyElasticearchURL)
   }
   dsn(): string {
-    throw new Error('Method not implemented.')
+    return config.get(keyDSN)
   }
   dsnProtocol(): string {
-    throw new Error('Method not implemented.')
+    return this.dsn().split('://')[0]
   }
   traccer(): Tracer {
     throw new Error('Method not implemented.')
   }
   objectStorageAccessKey(): string {
-    throw new Error('Method not implemented.')
+    return config.get(keyObjectAccess)
   }
   objectStorageSecretKey(): string {
-    throw new Error('Method not implemented.')
+    return config.get(keyObjectSecret)
   }
   elasticsearchUsername(): string {
-    throw new Error('Method not implemented.')
+    return config.get(keyElasticearchUsername)
   }
   elasticsearchPassword(): string {
-    throw new Error('Method not implemented.')
+    return config.get(keyElasticearchPassword)
   }
   getProtocol(d: string): string {
-    throw new Error('Method not implemented.')
+    return d.split('://')[0]
   }
 }
 

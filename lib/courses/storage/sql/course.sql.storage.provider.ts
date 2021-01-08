@@ -1,132 +1,332 @@
-import { Certificate, Course, CourseQueryParam, CourseStorageManager, Module, Options, Param, Question, QuestionType, Quiz } from "../../../../core/courses"
-import Context from "../../../../context"
-import { Paginated } from "../../../../core/core.types"
-import SQLConnection, { tables } from "../../../storage/drivers/sql/connection"
-import ConfigProvider from "../../../../config"
-import * as knex from "knex"
-import { INDEX_TABLE_CAREERS } from "../../../careers"
-import { NotFoundError } from "../../../../errors"
+import { Certificate, Course, CourseQueryParam, CourseStorageManager, HerarcialModule, Module, Options, Question, QuestionType, Quiz } from '../../../../core/courses'
+import Context from '../../../../context'
+import { Paginated, Param } from '../../../../core/core.types'
+import SQLConnection, { tables } from '../../../storage/drivers/sql/connection'
+import ConfigProvider from '../../../../config'
+import * as knex from 'knex'
+import { NotFoundError, PrecondtionError } from '../../../../errors'
 import { to } from 'await-to-js'
+import CareerSQLProvider from '../../../careers/storage/sql/careers.sql.storage.provider'
+import { Level } from '../../../../core/careers'
 
 export default class CourseSQLStorageProvider implements CourseStorageManager {
   configProvider: ConfigProvider
-  courseDB: knex.QueryBuilder<Course, Course[]>
-  modulesDB: knex.QueryBuilder<Module, Module[]>
-  certificateDB: knex.QueryBuilder<Certificate, Certificate[]>
-  quizQuestionDB: knex.QueryBuilder
-  quizQuestionOptionsDB: knex.QueryBuilder
-  quizDB: knex.QueryBuilder<Quiz, Quiz[]>
+  DB: knex.QueryBuilder
+  careerDB: CareerSQLProvider
   constructor(configProvider: ConfigProvider){
     this.configProvider = configProvider
-    this.courseDB = SQLConnection(configProvider)(tables.INDEX_TABLE_COURSES)
-    this.modulesDB = SQLConnection(configProvider)(tables.INDEX_TABLE_MODULES)
-    this.certificateDB = SQLConnection(configProvider)(tables.INDEX_TABLE_RESULT_CERTIFICATE)
-    this.quizDB = SQLConnection(configProvider)(tables.INDEX_TABLE_QUIZ)
-    this.quizQuestionDB = SQLConnection(configProvider)(tables.INDEX_TABLE_QUESTIONS)
-    this.quizQuestionOptionsDB = SQLConnection(configProvider)(tables.INDEX_TABLE_QUESTION_OPTIONS)
+    this.careerDB = new CareerSQLProvider(configProvider)
   }
-  async fetchCourses(context: Context, param: Param<CourseQueryParam>): Promise<Paginated<Course[]>> {
-    let courseDB = this.courseDB
-    if(param.search.level) courseDB = courseDB.whereIn(`level`, function() {
-      this.select(`id`).from(INDEX_TABLE_CAREERS).where(`name`, `like`, `%${param.search.level}%`)
-    }).orderBy(`number`, `asc`)
-    if(param.search.tutor) courseDB = courseDB.where(`tutor`, `like`, `%${param.search.tutor}%`)
-    const courses = await courseDB.limit(param.pagination.size).offset((param.pagination.page - 1) * param.pagination.size)
-    const t = await courseDB.count<Record<string, number>>('name')
-    const total_size = t[0]['count(`name`)']
-    const page = param.pagination.page
+  courseDB(){
+    return SQLConnection(this.configProvider)(tables.INDEX_TABLE_COURSES)
+  }
+  modulesDB() {
+    return SQLConnection(this.configProvider)(tables.INDEX_TABLE_MODULES)
+  } 
+  certificateDB() {
+    return SQLConnection(this.configProvider)(tables.INDEX_TABLE_RESULT_CERTIFICATE)
+  } 
+  quizDB() {
+    return SQLConnection(this.configProvider)(tables.INDEX_TABLE_QUIZ)
+  } 
+  quizQuestionDB() {
+    return SQLConnection(this.configProvider)(tables.INDEX_TABLE_QUESTIONS)
+  } 
+  quizQuestionOptionsDB() {
+    return SQLConnection(this.configProvider)(tables.INDEX_TABLE_QUESTION_OPTIONS)
+  } 
+  async fetchCourses(context: Context, param?: Param<CourseQueryParam>): Promise<Paginated<Course[]>> {
+    let courseDB = this.courseDB().select(
+      `${tables.INDEX_TABLE_COURSES}.uuid`,
+      `${tables.INDEX_TABLE_COURSES}.tutor`, 
+      `${tables.INDEX_TABLE_COURSES}.open`, 
+      `${tables.INDEX_TABLE_COURSES}.name`, 
+      `${tables.INDEX_TABLE_COURSES}.number`, 
+      `${tables.INDEX_TABLE_COURSES}.status`,
+      `${tables.INDEX_TABLE_COURSES}.description`,
+      `${tables.INDEX_TABLE_LEVELS}.uuid as level_uuid`,
+      `${tables.INDEX_TABLE_LEVELS}.name as level_name`,
+      `${tables.INDEX_TABLE_CAREERS}.name as career_name`,
+      )
+      .join(tables.INDEX_TABLE_LEVELS, `${tables.INDEX_TABLE_COURSES}.level`, `=`, `${tables.INDEX_TABLE_LEVELS}.id`)
+      .join(tables.INDEX_TABLE_CAREERS, `${tables.INDEX_TABLE_LEVELS}.career`, `=`, `${tables.INDEX_TABLE_CAREERS}.id`)
+    
+    courseDB = param && param.search && param.search.level && courseDB.where(`${tables.INDEX_TABLE_LEVELS}.uuid`, '=', `${param.search.level}`) || courseDB
+
+    courseDB = param && param.search && param.search.tutor && courseDB.where(`tutor`, `like`, `%${param.search.tutor}%`) || courseDB
+    const courses =  await courseDB
+    
+    const t = await courseDB.clone().clearSelect().count<Record<string, number>>(`${tables.INDEX_TABLE_COURSES}.name`)
+
+    const page = param && param.pagination && param.pagination.page || 1 
+    
+    const size = param && param.pagination && param.pagination.size || 10
+    courseDB = courseDB.limit(size).offset((page - 1) * size)
+    
+    const total_size = t[0][`count(\`${tables.INDEX_TABLE_COURSES}\`.\`name\`)`]
+    
+    const res: Course[] = []
+    for (const i in courses) {
+      const element = courses[i]
+      res.push({
+        created: element.created,
+        description: element.description,
+        uuid: element.uuid,
+        level: {
+          career: {
+            name: element.career_name
+          },
+          name: element.level_name,
+          uuid: element.level_uuid,
+          number: element.level_number
+        },
+        number: element.number,
+        status: element.status,
+        name: element.name,
+        tutor: element.tutor,
+        open: element.open
+      })
+    }
     return {
-      data: courses,
-      pagiation: {
+      data: res,
+      pagination: {
         page,
         total_size,
-        size: param.pagination.size,
-        total_page: Math.round(total_size / page)
+        size: size,
+        total_page: Math.ceil(total_size / size)
       }
     }
   }
   async getCourse(context: Context, courseUUID: string): Promise<Course> {
-    let [course] = await this.courseDB.where({ uuid: courseUUID})
-    if(!course) throw NotFoundError(`Career not found`)
-    return course
+    let [course] = await this.courseDB().select(
+      `${tables.INDEX_TABLE_COURSES}.*`,
+      `${tables.INDEX_TABLE_LEVELS}.uuid as level_uuid`,
+      `${tables.INDEX_TABLE_LEVELS}.name as level_name`,
+      `${tables.INDEX_TABLE_CAREERS}.name as career_name`,
+      )
+      .join(tables.INDEX_TABLE_LEVELS, `level`, `=`, `${tables.INDEX_TABLE_LEVELS}.id`)
+      .join(tables.INDEX_TABLE_CAREERS, `${tables.INDEX_TABLE_LEVELS}.career`, `=`, `${tables.INDEX_TABLE_CAREERS}.id`)
+      .where(`${tables.INDEX_TABLE_COURSES}.uuid`, courseUUID)
+    if(!course) throw NotFoundError(`Course not found`)
+    
+    const c: Course = {
+      description: course.description,
+      name: course.name,
+      level: {
+        career: {
+          name: course.career_name
+        },
+        uuid: course.level_uuid,
+        name: course.level_name,
+        number: course.level_number
+      },
+      open: course.open,
+      number: course.number,
+      status: course.status,
+      tutor: course.tutor,
+      uuid: course.uuid,
+      created: course.created,
+      overview: course.overview,
+      updated: course.updated,
+      link_path: course.link_path,
+      id: course.id
+    }
+    return c
   }
   async checkCoursesLinkPath(context: Context, linkPath: string): Promise<void> {
     
   }
   async createCourse(context: Context, course: Course): Promise<Course> {
-    course.resources = undefined
-    await this.courseDB.insert(course)
+    const level = await this.careerDB.getCareerLevel(context, course.level.uuid)
+    course.level = level.id as any as Level
+    await this.courseDB().insert(course)
+    course.level = level
     return course
   }
   async updateCourse(context: Context, uuid: string, course: Course): Promise<Course> {
     await this.getCourse(context, uuid)
-    await this.courseDB.update({ ...course }).where({ uuid })
+    if(course.level) {
+      const level = await this.careerDB.getCareerLevel(context, course.level.uuid)
+      course.level = level.id as any as Level
+    }
+    await this.courseDB().update({ ...course }).where({ uuid })
     return course
   }
   async deleteCourse(context: Context, uuid: string): Promise<Course> {
     const course = await this.getCourse(context, uuid)
-    await this.courseDB.delete().where({ uuid })
+    await this.courseDB().delete().where({ uuid })
     return course
   }
   
-  async getResultCertificate(context: Context, courseUUID: string): Promise<Certificate> {
-    const course = await this.getCourse(context, courseUUID)
-    const [certificate] = await this.certificateDB.where({course: course.id as any as Course})
+  async fetchResultCertificate(context: Context, courseUUID: string): Promise<Certificate[]> {
+    const certificates = await this.certificateDB()
+      .select(
+        `${tables.INDEX_TABLE_RESULT_CERTIFICATE}.uuid`,
+        `${tables.INDEX_TABLE_RESULT_CERTIFICATE}.caption`,
+        `${tables.INDEX_TABLE_RESULT_CERTIFICATE}.weight_goal`,
+        `${tables.INDEX_TABLE_RESULT_CERTIFICATE}.uuid`,
+        `${tables.INDEX_TABLE_RESULT_CERTIFICATE}.created`,
+        `${tables.INDEX_TABLE_RESULT_CERTIFICATE}.updated`,
+        `${tables.INDEX_TABLE_COURSES}.name as course_name`,
+        `${tables.INDEX_TABLE_COURSES}.description as course_description`,
+        `${tables.INDEX_TABLE_COURSES}.uuid as course_uuid`
+        )
+        .join(tables.INDEX_TABLE_COURSES, `${tables.INDEX_TABLE_RESULT_CERTIFICATE}.course`, '=', `${tables.INDEX_TABLE_COURSES}.id`)
+        .where(`${tables.INDEX_TABLE_COURSES}.uuid`, '=', courseUUID)
+
+    if(certificates.length === 0) throw NotFoundError(`Certificate not setted for this course`)
+    const result: Certificate[] = []
+    for (const i in certificates) {
+      const element = certificates[i]
+      result.push({
+        uuid: element.uuid,
+        caption: element.caption,
+        created: element.created,
+        updated: element.updated,
+        course: {
+          description: element.course_description,
+          uuid: element.course_uuid,
+          name: element.course_name
+        } as Course,
+        weight_goal: element.weight_goal
+      } as Certificate)
+       
+    }
+    return result
+  }
+  async getResultCertificate(context: Context, courseUUID: string, certificateUUID: string): Promise<Certificate> {
+    const [certificate] = await this.certificateDB()
+      .select(
+        `${tables.INDEX_TABLE_RESULT_CERTIFICATE}.*`,
+        `${tables.INDEX_TABLE_COURSES}.name as course_name`,
+        `${tables.INDEX_TABLE_COURSES}.description as course_description`,
+        `${tables.INDEX_TABLE_COURSES}.uuid as course_uuid`
+        )
+        .join(tables.INDEX_TABLE_COURSES, `${tables.INDEX_TABLE_RESULT_CERTIFICATE}.course`, '=', `${tables.INDEX_TABLE_COURSES}.id`)
+        .where(`${tables.INDEX_TABLE_RESULT_CERTIFICATE}.uuid`, '=', certificateUUID)
     if(!certificate) throw NotFoundError(`Certificate not setted for this course`)
     return {
-      ...certificate,
-      course
+      id: certificate.id,
+      uuid: certificate.uuid,
+      caption: certificate.caption,
+      weight_goal: certificate.weight_goal,
+      format: certificate.format,
+      created: certificate.created,
+      updated: certificate.updated,
+      course: {
+        uuid: certificate.course_uuid,
+        name: certificate.course_name,
+        description: certificate.course_description
+      } as Course
     }
   }
   async createResultCertificate(context: Context, courseUUID: string, certificate: Certificate): Promise<Certificate> {
-    const [err, existingCertificate] = await to(this.getResultCertificate(context, courseUUID))
-    if(err) {
-      const course = await this.getCourse(context, courseUUID)
-      certificate.course = course.id as any as Course
-      await this.certificateDB.insert(certificate)
+    const course = await this.getCourse(context, courseUUID)
+    await this.certificateDB().insert({
+      ...certificate,
+      course: course.id
+    })
+    
+    return {
+      ...certificate,
+      course: course
     }
-    else {
-      delete certificate.uuid
-      delete certificate.course
-      await this.certificateDB.update({
-        ...existingCertificate,
-        ...certificate
-      }).where({ id: existingCertificate.id })
-    }
-    certificate.course = existingCertificate.course
+  }
+  async updateResultCertificate(context: Context, courseUUID: string, certificateUUID: string, certificate: Certificate): Promise<Certificate> {
+
+    await this.certificateDB().insert(certificate)
+    await this.certificateDB().update({
+      ...certificate
+    }).where({ uuid: certificateUUID })
+    certificate = await this.getResultCertificate(context, courseUUID, certificateUUID)
     return {
       ...certificate
     }
   }
-  async deleteResultCertificate(context: Context, courseUUID: string): Promise<Certificate> {
-    const certificate = await this.getResultCertificate(context, courseUUID)
-    await this.certificateDB.delete().where({ id: certificate.id })
+  async deleteResultCertificate(context: Context, courseUUID: string, certificateUUID: string): Promise<Certificate> {
+    const certificate = await this.getResultCertificate(context, courseUUID, certificateUUID)
+    await this.certificateDB().delete().where({ id: certificate.id })
     return certificate
   }
   
   async fetchModules(context, courseUUID: string, parentModule?: string): Promise<Module[]> {
-    let mDB = this.modulesDB.whereIn(`course`, function() {
+    let mDB = SQLConnection(this.configProvider)
+    .select(
+      'name', 
+      'uuid',
+      SQLConnection(this.configProvider)
+      .from(tables.INDEX_TABLE_MODULES)
+      .count('uuid')
+      .whereRaw(`parent_module = m1.id`).as(`sub_modules_count`)
+    )
+    .from(`${tables.INDEX_TABLE_MODULES} as m1`)
+    .whereIn(`course`, function() {
       this.select(`id`).from(tables.INDEX_TABLE_COURSES).where({
         uuid: courseUUID
       })
     })
-    mDB = !parentModule ? mDB : mDB.whereIn(`parent_module`, function(){
+    mDB = !parentModule ? mDB.where({ parent_module: null }) : mDB.whereIn(`parent_module`, function(){
       this.select(`id`).from(tables.INDEX_TABLE_MODULES).where({ uuid: parentModule })
     })
-    const modules = await mDB
-    if(modules.length === 0) throw NotFoundError(`Modules not found`)
+    let modules = await mDB
     return modules
   }
+  async herarcialModules(context: Context, courseUUID: string): Promise<HerarcialModule[]> {
+    const getChild = async (context: Context, modules: Module[]): Promise<HerarcialModule[]> => {
+      const p = []
+      const index: number[] = []
+      const h: HerarcialModule[] = []
+      for (let i = 0; i< modules.length ; i++) {
+          const element = modules[i]
+          if (element.sub_modules_count) {
+            index.push(i)
+            p.push(this.fetchModules(context, courseUUID, element.uuid))
+          }
+          h.push({
+            name: element.name,
+            uuid: element.uuid,
+            sub_modules: element.sub_modules_count ? [] : null 
+          })
+      }
+      
+      const s = await Promise.all(p)
+      for (let i = 0; i < s.length; i++) {
+        const element = s[i];
+        const c = await getChild(context, element)
+        h[index[i]].sub_modules.push(
+            ...c
+        )
+      }
+      return h
+    }
+    let m = await this.fetchModules(context, courseUUID)
+    const h = getChild(context, m)    
+    return h
+  }
   async getModule(context: Context, courseUUID: string, moduleUUID: string): Promise<Module> {
-    const modules = await this.modulesDB.whereIn(`course`, function() {
-      this.select(`id`).from(tables.INDEX_TABLE_COURSES).where({
-        uuid: courseUUID
-      })
-    }).where({
-      uuid: moduleUUID
-    })
-    if(modules.length === 0) throw NotFoundError(`Modules not found`)
-    return module[0]
+    const [module] = 
+    await this.modulesDB()
+    .select(
+      `${tables.INDEX_TABLE_MODULES}.*`,
+      `${tables.INDEX_TABLE_COURSES}.uuid as course_uuid`,
+      `${tables.INDEX_TABLE_COURSES}.name as course_name`,
+      `${tables.INDEX_TABLE_COURSES}.tutor`,
+      )
+    .join(tables.INDEX_TABLE_COURSES, `${tables.INDEX_TABLE_MODULES}.course`, '=', `${tables.INDEX_TABLE_COURSES}.id`)
+    .where(`${tables.INDEX_TABLE_MODULES}.uuid`, moduleUUID)
+    .where(`${tables.INDEX_TABLE_COURSES}.uuid`, courseUUID)
+    if(!module) throw NotFoundError(`Modules not found`)
+    return {
+      ...module,
+      course: {
+        tutor: module.tutor,
+        name: module.course_name,
+        uuid: module.course_uuid
+      },
+      tutor: undefined,
+      course_name: undefined,
+      course_uuid: undefined
+    }
   }
   async checkModulesLinkPath(context: Context, linkPath: string): Promise<void> {
 
@@ -134,21 +334,38 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
   async createModule(context: Context, courseUUID: string, module: Module): Promise<Module> {
     const course = await this.getCourse(context, courseUUID)
     module.course = course.id as any as Course
-    await this.modulesDB.insert(module)
-    return module
+    let [e, pModule] = [null, null]
+    if(module.parent_module){
+      [e, pModule] = await to(this.getModule(context, courseUUID, module.parent_module.uuid))
+      if (e) throw NotFoundError(`Parent module not found`)
+      module.parent_module = pModule.id as any as Module 
+    }
+    await this.modulesDB().insert(module)
+    return {
+      ...module,
+      course: course,
+      parent_module: pModule
+    }
   }
   async updateModule(context: Context, courseUUID: string, moduleUUID: string, module: Module): Promise<Module> {
     let existingModule = await this.getModule(context, courseUUID, moduleUUID)
+    const course = existingModule.course
+
     existingModule = {
       ...existingModule,
-      ...module
+      ...module,
+      course: course.id as any as Course
     }
-    await this.modulesDB.update(existingModule).where({uuid: moduleUUID})
-    return existingModule
+    
+    await this.modulesDB().update(existingModule).where({uuid: moduleUUID})
+    return {
+      ...existingModule,
+      course
+    }
   }
   async deleteModule(context: Context, courseUUID: string, moduleUUID: string): Promise<Module> {
     const module = await this.getModule(context, courseUUID, moduleUUID)
-    await this.modulesDB.del().whereIn(`course`, function() {
+    await this.modulesDB().del().whereIn(`course`, function() {
       this.select(`id`).from(tables.INDEX_TABLE_COURSES).where({
         uuid: courseUUID
       })
@@ -159,7 +376,7 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
   }
   
   async getModuleQuiz(context, courseUUID: string, moduleUUID: string): Promise<Quiz> {
-    const [quiz] = await this.quizDB.whereIn(`module`, function() {
+    const [quiz] = await this.quizDB().whereIn(`module`, function() {
       this.select(`id`).from(tables.INDEX_TABLE_MODULES).where({
         uuid: moduleUUID
       }).whereIn(`course`, function(){
@@ -181,7 +398,8 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
     const module = await this.getModule(context, courseUUID, moduleUUID)
     const [err] = await to(this.getModuleQuiz(context, courseUUID, moduleUUID))
     if(err) {
-      await this.quizDB.insert(quiz)  
+      quiz.module = module.id as any as Module
+      await this.quizDB().insert(quiz)  
       return quiz
     }
     return await this.updateModuleQuiz(context, courseUUID, moduleUUID, quiz)
@@ -190,19 +408,24 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
     const existingQuiz = await this.getModuleQuiz(context, courseUUID, moduleUUID)
     const updatedQuiz = {
       ...existingQuiz,
+      ...quiz,
+      module: existingQuiz.module.id as any as Module,
+    }
+    delete updatedQuiz.questions
+    await this.quizDB().update(updatedQuiz).where({id: existingQuiz.id})
+    return {
+      ...existingQuiz,
       ...quiz
     }
-    await this.quizDB.update(updatedQuiz).where({id: existingQuiz.id})
-    return updatedQuiz
   }
   async deleteModuleQuiz(context: Context, courseUUID: string, moduleUUID: string): Promise<Quiz> {
     const existingQuiz = await this.getModuleQuiz(context, courseUUID, moduleUUID)
-    await this.quizDB.del().where({ id: existingQuiz.id })
+    await this.quizDB().del().where({ id: existingQuiz.id })
     return existingQuiz
   }
 
   async fetchModuleQuizQuestions(context, courseUUID: string, moduleUUID: string, quizUUID: string): Promise<Question[]> {
-    let questions = await this.quizQuestionDB.whereIn(`quiz`, function(){
+    let questions = await this.quizQuestionDB().whereIn(`quiz`, function(){
       this.select(`id`).from(tables.INDEX_TABLE_QUIZ).where({
         uuid: quizUUID
       }).whereIn(`module`, function() {
@@ -219,7 +442,7 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
 
   async getModuleQuizQuestions(context: Context, courseUUID: string, moduleUUID: string, quizUUID: string, questionUUID: string): Promise<Question> {
     let [question] = 
-      await this.quizQuestionDB.where({ uuid: questionUUID })
+      await this.quizQuestionDB().where({ uuid: questionUUID })
         .whereIn(`quiz`, function() {
           this.select(`id`)
             .from(tables.INDEX_TABLE_QUIZ)
@@ -244,7 +467,7 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
   async createModuleQuizQuestions(context: Context, courseUUID: string, moduleUUID: string, quizUUID: string, question: Question): Promise<Question> {
     const quiz = await this.getModuleQuiz(context, courseUUID, moduleUUID)
     if(quizUUID !== quiz.uuid) throw NotFoundError(`Quiz not found`)
-    await this.quizQuestionDB.insert({...question, quiz: quiz.id})
+    await this.quizQuestionDB().insert({...question, quiz: quiz.id})
     return question
   }
   async updateModuleQuizQuestions(context: Context, courseUUID: string, moduleUUID: string, quizUUID: string, questionUUID: string, question: Question): Promise<Question> {
@@ -253,22 +476,42 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
       ...existingQuestion,
       ...question
     }
-    await this.quizQuestionDB.update(updatedQuestion).where({ id: existingQuestion.id })
+    await this.quizQuestionDB().update(updatedQuestion).where({ id: existingQuestion.id })
     return question
   }
   async deleteModuleQuizQuestions(context: Context, courseUUID: string, moduleUUID: string, quizUUID: string, questionUUID: string): Promise<Question> {
     const existingQuestion = await this.getModuleQuizQuestions(context, courseUUID, moduleUUID, quizUUID, questionUUID)
-    await this.quizQuestionDB.del().where({ id: existingQuestion.id })
+    await this.quizQuestionDB().del().where({ id: existingQuestion.id })
     return existingQuestion
   }
   async fetchModuleQuizQuestionOptions(context, courseUUID: string, moduleUUID: string, quizUUID: string, questionUUID: string): Promise<Options[]> {
     const question = await this.getModuleQuizQuestions(context, courseUUID, moduleUUID, quizUUID, questionUUID)
-    const options = await this.quizQuestionOptionsDB.where({ question: question.id })
+    const options = await this.quizQuestionOptionsDB()
+      .where({ question: question.id })
+      .whereIn(`question`, function (){
+        this
+        .select(`id`)
+        .from(tables.INDEX_TABLE_QUESTIONS)
+        .where(`uuid`, '=', questionUUID)
+        .whereIn(`module`, function(){
+          this
+          .select(`id`)
+          .from(tables.INDEX_TABLE_MODULES)
+          .where(`uuid`, `=`, moduleUUID)
+          .whereIn(`course`, function(){
+            this
+            .select(`id`)
+            .from(tables.INDEX_TABLE_COURSES)
+            .where(`uuid`, '=', courseUUID)
+          })
+        })
+      })
     if(options.length === 0) throw NotFoundError(`Options not setted`)
     return options
   }
   async updateModuleQuizQuestionOptions(context: Context, courseUUID: string, moduleUUID: string, quizUUID: string, questionUUID: string, options: Options[]): Promise<Options[]> {
     const question = await this.getModuleQuizQuestions(context, courseUUID, moduleUUID, quizUUID, questionUUID)
+    if(question.type !== QuestionType.MULTIPLE_CHOISE) throw PrecondtionError(`Question type is not MULTIPLE_CHOOISE: ${QuestionType.MULTIPLE_CHOISE}`)
     let o = []
     for (const p in options) {
       o.push({
@@ -276,7 +519,7 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
         question: question.id
       })
     }
-    await this.quizQuestionOptionsDB.insert(o)
+    await this.quizQuestionOptionsDB().insert(o)
     return options
   }
 }
