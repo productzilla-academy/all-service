@@ -18,6 +18,7 @@
     "body-parser": "^1.19.0",
     "chai": "^4.2.0",
     "config": "^3.3.2",
+    "cross-env": "^7.0.3",
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
     "express-fileupload": "^1.2.0",
@@ -36,12 +37,19 @@
     "typescript": "^4.0.3",
     "uuid": "^8.3.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "nexe": "^3.3.7",
+    "ts-clean": "^1.0.3"
+  },
   "scripts": {
     "test": "mocha -r ts-node/register tests/**/*.test.ts",
     "migrate": "ts-node bin/app.ts migrate",
     "dev": "ts-node-dev bin/app.ts serve",
-    "start": "ts-node bin/app.ts serve"
+    "start": "ts-node bin/app.ts serve",
+    "build": "tsc --project tsconfig.json",
+    "nexe": "cross-env NODE_ENV=production NEXE_PLATFORM=${NEXE_PLATFORM} NEXE_ARCH=${NEXE_ARCH} NEXE_VERSION=${NEXE_VERSION} node build/nexe/compiler.js",
+    "pkg": "npm run build && npm run nexe",
+    "clean": "ts-clean bin/app.ts"
   },
   "author": "",
   "license": "ISC"

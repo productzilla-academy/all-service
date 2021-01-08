@@ -179,7 +179,8 @@
           }
         ],
         "tags": [
-          "course"
+          "course",
+          "lms"
         ],
         "responses": {
           "200": {
@@ -201,7 +202,8 @@
           }
         ],
         "tags": [
-          "course"
+          "course",
+          "lms"
         ],
         "responses": {
           "200": {
@@ -223,7 +225,8 @@
           }
         ],
         "tags": [
-          "course"
+          "course",
+          "lms"
         ],
         "responses": {
           "200": {
@@ -253,7 +256,8 @@
           }
         ],
         "tags": [
-          "course"
+          "course",
+          "lms"
         ],
         "responses": {
           "200": {
@@ -276,7 +280,8 @@
         ],
         "description": "Fetch all course by career career",
         "tags": [
-          "course"
+          "course",
+          "lms"
         ],
         "responses": {
           "200": {
@@ -424,7 +429,8 @@
     "/courses/{course_uuid}/certificates": {
       "get": {
         "tags": [
-          "Certificate Format"
+          "Certificate Format",
+          "lms"
         ],
         "parameters": [
           {
@@ -507,7 +513,8 @@
     "/courses/{course_uuid}/certificates/{certificate_uuid}": {
       "get": {
         "tags": [
-          "Certificate Format"
+          "Certificate Format",
+          "lms"
         ],
         "parameters": [
           {

@@ -1,0 +1,60 @@
+version: "3.4"
+services:
+  ########################
+  # SERVICE DEPENDENCIES #
+  ######################## 
+  mariadb:
+    image: mariadb:10.3.10
+    restart: unless-stopped
+    environment:
+        - MYSQL_ROOT_PASSWORD=productzilla
+        - MYSQL_DATABASE=productzilla
+        - MYSQL_USER=productzilla
+        - MYSQL_PASSWORD=productzilla
+    ports:
+      - 55559:3306
+    networks:
+      default:
+
+  core-service-proxy:
+    image: abiosoft/caddy:0.11.1
+    restart: unless-stopped
+    environment:
+      CADDY_CONF: |
+        :80 {
+          proxy / core-service:1321
+        }
+        :443 {
+          tls self_signed
+          proxy / core-service:1321
+        }
+    entrypoint: /bin/sh
+    command: -c 'echo "$$CADDY_CONF" | caddy -conf stdin'
+    networks:
+      default:
+        aliases:
+          - core.productzilla.internal
+  proxy:
+    image: dannydirect/tinyproxy:latest
+    ports: 
+      - 8881:8888
+    command: ANY
+    networks:
+      default:
+      
+  core-service:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    restart: unless-stopped
+    environment: 
+      - DSN=mysql://productzilla:productzilla@mariadb:3306/productzilla
+    networks:
+      default:
+  core-service-migrator:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    restart: unless-stopped
+    environment: 
+      - DSN=mysql://productzilla:productzilla@mariadb:3306/productzilla
+    networks:
+      default:
+networks:
+  default:

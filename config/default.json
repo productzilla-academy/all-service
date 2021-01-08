@@ -23,5 +23,5 @@
     "sampler": null,
     "const": null
   },
-  "dsn": "mysql://root:himed@127.0.0.1:55559/product_zilla"
+  "dsn": "mysql://productzilla:productzilla@127.0.0.1:55559/productzilla"
 }

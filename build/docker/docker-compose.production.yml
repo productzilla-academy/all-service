@@ -1,0 +1,27 @@
+
+version: "3.4"
+services:
+  core-service:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    build: 
+      context: ../../
+      dockerfile: ./build/docker/dockerfile
+    restart: unless-stopped
+    working_dir: ${PWD}
+    environment: 
+      - NODE_ENV=production
+    volumes:
+      - ../../:${PWD}/../..
+    command: serve
+  core-service-migrator:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    build: 
+      context: ../../
+      dockerfile: ./build/docker/dockerfile
+    restart: unless-stopped
+    working_dir: ${PWD}
+    environment: 
+      - NODE_ENV=production
+    volumes:
+      - ../../:${PWD}/../..
+    command: migrate

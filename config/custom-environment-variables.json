@@ -18,10 +18,10 @@
     }
   },
   
-  "jaeger.url": {
+  "jaeger": {
     "url": "JAEGER_URL",
     "sampler": "JAEGER_SAMPLER",
     "const": "JAEGER_CONST"
   },
-  "DSN": "DSN"
+  "dsn": "DSN"
 }
