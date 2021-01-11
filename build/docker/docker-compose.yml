@@ -53,5 +53,19 @@ services:
       - DSN=mysql://productzilla:productzilla@mariadb:3306/productzilla
     networks:
       default:
+  minio:
+    image: minio/minio:RELEASE.2021-01-08T21-18-21Z
+    ports:
+      - "9000:9000"
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    command: server --address 0.0.0.0:9000 /data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
 networks:
   default:
