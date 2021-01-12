@@ -29,7 +29,7 @@ export const getCourseBody = (r: RestRequest): Course => ({
   } as any as Level,
   name: r.body.name,
   number: r.body.number,
-  open: r.body.open,
+  open: r.body.open ? new Date(r.body.open) : new Date(),
   status: r.body.status,
   tutor: getTutor(r),
   overview: r.body.overview

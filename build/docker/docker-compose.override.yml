@@ -19,7 +19,7 @@ services:
     image: ${IMAGE_NAME}:dev
     build: 
       context: ../../
-      dockerfile: ./build/docker/dockerfile
+      dockerfile: ./build/docker/dockerfile 
       target: builder
     restart: unless-stopped
     working_dir: ${PWD}/../..

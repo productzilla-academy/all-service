@@ -147,7 +147,7 @@ export class CourseStorageProvider implements CourseStorageManager{
   }
   async createModuleQuizQuestions(context: Context, courseUUID: string, moduleUUID: string, quizUUID: string, question: Question): Promise<Question> {
     const uuid = UUID.v5(quizUUID + question.question, UUID.v5.URL)
-    question.uuid = uuid
+    question.uuid = uuid    
     const f: Promise<Question>[] = [this.coldDB.createModuleQuizQuestions(context, courseUUID, moduleUUID, quizUUID, question)]
     if(this.hotDB) f.push(this.hotDB.createModuleQuizQuestions(context, courseUUID, moduleUUID, quizUUID, question))
     const [ q ] = await Promise.all(f)

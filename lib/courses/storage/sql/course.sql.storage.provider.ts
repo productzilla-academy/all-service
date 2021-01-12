@@ -4,7 +4,7 @@ import { Paginated, Param } from '../../../../core/core.types'
 import SQLConnection, { tables } from '../../../storage/drivers/sql/connection'
 import ConfigProvider from '../../../../config'
 import * as knex from 'knex'
-import { NotFoundError, PrecondtionError } from '../../../../errors'
+import { BadRequestError, NotFoundError, PrecondtionError } from '../../../../errors'
 import { to } from 'await-to-js'
 import CareerSQLProvider from '../../../careers/storage/sql/careers.sql.storage.provider'
 import { Level } from '../../../../core/careers'
@@ -425,6 +425,7 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
   }
 
   async fetchModuleQuizQuestions(context, courseUUID: string, moduleUUID: string, quizUUID: string): Promise<Question[]> {
+
     let questions = await this.quizQuestionDB().whereIn(`quiz`, function(){
       this.select(`id`).from(tables.INDEX_TABLE_QUIZ).where({
         uuid: quizUUID
@@ -432,6 +433,7 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
         this.select(`id`).from(tables.INDEX_TABLE_MODULES).where({ uuid: moduleUUID })
       })
     })
+
     for(const p in questions){
       let e: Error
       if(questions[p].type === QuestionType.MULTIPLE_CHOISE)
@@ -484,10 +486,8 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
     await this.quizQuestionDB().del().where({ id: existingQuestion.id })
     return existingQuestion
   }
-  async fetchModuleQuizQuestionOptions(context, courseUUID: string, moduleUUID: string, quizUUID: string, questionUUID: string): Promise<Options[]> {
-    const question = await this.getModuleQuizQuestions(context, courseUUID, moduleUUID, quizUUID, questionUUID)
+  async fetchModuleQuizQuestionOptions(context: Context, courseUUID: string, moduleUUID: string, quizUUID: string, questionUUID: string): Promise<Options[]> {
     const options = await this.quizQuestionOptionsDB()
-      .where({ question: question.id })
       .whereIn(`question`, function (){
         this
         .select(`id`)
@@ -514,8 +514,11 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
     if(question.type !== QuestionType.MULTIPLE_CHOISE) throw PrecondtionError(`Question type is not MULTIPLE_CHOOISE: ${QuestionType.MULTIPLE_CHOISE}`)
     let o = []
     for (const p in options) {
+      for (const k in o) {
+        if(options[p].label === o[k].label) throw BadRequestError(`Options label must be unique`)
+      }
       o.push({
-        ...options,
+        ...options[p],
         question: question.id
       })
     }

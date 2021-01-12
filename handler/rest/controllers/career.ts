@@ -9,10 +9,10 @@ export const careerParam = {
   name: 'career_name'
 }
 export const getLevelUUID = (r: RestRequest): string => r.params[careerParam.uuid]
-export const getCareerName = (r: RestRequest): string => r.params[careerParam.name]
+export const getCareerName = (r: RestRequest): string => r.params[careerParam.name] && r.params[careerParam.name].toLocaleLowerCase().split(' ').join('-') 
 
 const getCareerBody = (r: RestRequest): Career => ({
-  name: r.body.name,
+  name: r.body.name  && r.body.name.toLocaleLowerCase().split(' ').join('-') ,
 })
 
 const getLevelBody = (r: RestRequest): Level => ({

@@ -1013,6 +1013,270 @@
           }
         }
       }
+    },
+    "/tutor/{tutor_name}/courses/{course_uuid}/modules/{module_uuid}/quizes/{quiz_uuid}/questions": {
+      "get": {
+        "tags": [
+          "course",
+          "provision"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "module_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "quiz_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/FetchQuestionResponse"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "course",
+          "provision"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "module_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "quiz_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/QuestionRequestBody"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/QuestionResponse"
+          }
+        }
+      }
+    },
+    "/tutor/{tutor_name}/courses/{course_uuid}/modules/{module_uuid}/quizes/{quiz_uuid}/questions/{question_uuid}": {
+      "put": {
+        "tags": [
+          "course",
+          "provision"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "module_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "quiz_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "question_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/QuestionRequestBody"
+        },
+        "responses": {
+          "202": {
+            "$ref": "#/components/responses/QuestionResponse"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "course",
+          "provision"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "module_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "quiz_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "question_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/components/responses/QuestionResponse"
+          }
+        }
+      }
+    },
+    "/tutor/{tutor_name}/courses/{course_uuid}/modules/{module_uuid}/quizes/{quiz_uuid}/questions/{question_uuid}/options": {
+      "put": {
+        "tags": [
+          "course",
+          "provision"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "module_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "quiz_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "question_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/QuestionOptionsRequestBody"
+        },
+        "responses": {
+          "202": {
+            "$ref": "#/components/responses/OptionsResponse"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1165,6 +1429,39 @@
             }
           }
         }
+      },
+      "FetchQuestionResponse": {
+        "description": "Array of Question",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/QuizQuestion"
+              }
+            }
+          }
+        }
+      },
+      "QuestionResponse": {
+        "description": "Spesifict Question",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/QuizQuestion"
+            }
+          }
+        }
+      },
+      "OptionsResponse": {
+        "description": "Spesifict Question",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/QuizQuestionOptionBody"
+            }
+          }
+        }
       }
     },
     "requestBodies": {
@@ -1224,6 +1521,27 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/QuizRequestBody"
+            }
+          }
+        }
+      },
+      "QuestionRequestBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/QuizQuestionRequest"
+            }
+          }
+        }
+      },
+      "QuestionOptionsRequestBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/QuizQuestionRequest"
+              }
             }
           }
         }
@@ -1562,10 +1880,46 @@
           },
           "type": {
             "type": "string",
-            "description": "QuestionType:\n * `multiple_choise`\n * `essay`\n",
+            "description": "QuestionType:\n * `multiple_choise`\n * `essay`\n * `upload`\n",
             "default": "multiple_choise"
           }
         }
+      },
+      "QuizQuestionOptionBody": {
+        "type": "object",
+        "properties": {
+          "is_answer": {
+            "type": "boolean"
+          },
+          "label": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "QuizQuestion": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Generic"
+          },
+          {
+            "$ref": "#/components/schemas/QuizQuestionRequest"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "options": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/QuizQuestionOptionBody"
+                },
+                "description": "null / undefined if question type is not multiple choise"
+              }
+            }
+          }
+        ]
       }
     }
   }

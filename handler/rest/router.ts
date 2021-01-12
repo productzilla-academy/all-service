@@ -52,6 +52,7 @@ export const RestRouter = (c: ConfigProvider, m: CoreManager) => {
   router.delete(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}`, courseCtrl.deleteCourse)
 
   router.get(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules`, moduleCtrl.fetchModules)
+  router.get(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/herarcial`, moduleCtrl.herarcialModules)
   router.post(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules`, moduleCtrl.createModule)
   router.get(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}`, moduleCtrl.getModules)
   router.put(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}`, moduleCtrl.updateModule)
@@ -70,13 +71,13 @@ export const RestRouter = (c: ConfigProvider, m: CoreManager) => {
 
   router.get(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/quizes/:${quizParams.quizUUID}/questions`, quizCtrl.fetchQuestions)
   router.post(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/quizes/:${quizParams.quizUUID}/questions`, quizCtrl.createQuestions)
-  router.get(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/quizes/:${quizParams.quizUUID}/questions/${quizParams.quizUUID}`, quizCtrl.getQuestions)
-  router.put(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/quizes/:${quizParams.quizUUID}/questions/${quizParams.quizUUID}`, quizCtrl.updateQuestions)
-  router.delete(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/quizes/:${quizParams.quizUUID}/questions/${quizParams.quizUUID}`, quizCtrl.deleteQuestions)
+  router.get(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/quizes/:${quizParams.quizUUID}/questions/:${quizParams.questionUUID}`, quizCtrl.getQuestions)
+  router.put(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/quizes/:${quizParams.quizUUID}/questions/:${quizParams.questionUUID}`, quizCtrl.updateQuestions)
+  router.delete(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/quizes/:${quizParams.quizUUID}/questions/:${quizParams.questionUUID}`, quizCtrl.deleteQuestions)
 
-  router.get(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/quizes/:${quizParams.quizUUID}/questions/${quizParams.quizUUID}/options`, quizCtrl.fetchQuizOptions)
-  router.post(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/quizes/:${quizParams.quizUUID}/questions/${quizParams.quizUUID}/options`, quizCtrl.updateQuizOptions)
-
+  router.get(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/quizes/:${quizParams.quizUUID}/questions/:${quizParams.questionUUID}/options`, quizCtrl.fetchQuizOptions)
+  router.put(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/quizes/:${quizParams.quizUUID}/questions/:${quizParams.questionUUID}/options`, quizCtrl.updateQuizOptions)
+  console.log(``)
   router.use(catchMiddleware(c.logger()))
 
   return router
