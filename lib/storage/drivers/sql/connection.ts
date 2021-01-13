@@ -26,7 +26,8 @@ export const tables = {
   INDEX_TABLE_TRANSACTIONS,
   INDEX_TABLE_ENROLLMENTS,
   INDEX_TABLE_LEARN_PROCESS,
-  INDEX_TABLE_QUIZ_ANSWER
+  INDEX_TABLE_QUIZ_ANSWER,
+  TABLE_REF_COURSE_CAREER_LEVEL: 'course_career_levels'
 }
 export const SQLConnection = (configProvider: ConfigProvider) => {
   if(SQLConn) return SQLConn

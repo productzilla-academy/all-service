@@ -15,16 +15,12 @@ services:
       - ../../:${PWD}/../..
     command: bash -c "npm run dev"
   core-service-migrator:
-    restart: unless-stopped
     image: ${IMAGE_NAME}:dev
     build: 
       context: ../../
       dockerfile: ./build/docker/dockerfile 
       target: builder
-    restart: unless-stopped
     working_dir: ${PWD}/../..
-    environment: 
-      - NODE_ENV=development
     volumes:
       - ../../:${PWD}/../..
     command: bash -c "npm run migrate"

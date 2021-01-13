@@ -1,4 +1,3 @@
-import { Level } from "../careers";
 import { General, Resource } from "../core.types"
 
 export enum CourseStatus {
@@ -9,7 +8,6 @@ export enum CourseStatus {
 }
 
 export interface Course extends General {
-  level: Level
   tutor: string
   open: Date
   number: number

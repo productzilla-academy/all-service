@@ -4,8 +4,9 @@ import MinioObjectStorageProvider from "./minio";
 export * from './object.storage.provider'
 const ObjectStorage = (c: ConfigProvider): ObjectStorageProvider => {
   const protocol = c.getProtocol(c.objectStorageURL())
+  console.log(protocol)
   if(protocol === 'minio') return new MinioObjectStorageProvider(c)
-  throw new Error(`Object storage protocol not implemented`)
+  // throw new Error(`Object storage protocol not implemented`)
 }
 
 export default ObjectStorage
