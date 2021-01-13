@@ -4,32 +4,39 @@ import ObjectStorageProvider from "../object.storage.provider";
 import Context from "../../../context";
 import { InternalServerError, NotFoundError } from "../../../errors"
 import { Stream } from "stream";
-
+import { URL } from "url";
+import { isStream, streamToString } from '../../services/stream'
 export default class MinioObjectStorageProvider implements ObjectStorageProvider {
   configProvider: ConfigProvider
   minioClient: Client
   constructor(configProvider: ConfigProvider) {
     this.configProvider = configProvider
+    const minioURL = new URL(configProvider.objectStorageURL().replace('minio://', ''))
     this.minioClient = new Client(
       {
-        endPoint: configProvider.objectStorageURL().replace('minio://', ''),
+        endPoint: minioURL.hostname,
+        port: parseInt(minioURL.port),
         accessKey: configProvider.objectStorageAccessKey(),
         secretKey: configProvider.objectStorageSecretKey()
       }
     )
   }
-  async uploadFile(context: Context, namespace:string, objectId: string, file: Buffer | Stream) {
-    const exists = await this.minioClient.getObject(namespace, objectId)
-    if (exists) {
-      let n = objectId.split('.') // spliting extension
-      if(n.length > 1) {
-        n[n.length - 2] += '-'
-        objectId = n.join('.')
+  async uploadFile(context: Context, namespace:string, objectId: string, file: Buffer | Stream, replaceOnExists?: boolean) {
+    const data: Buffer | string = isStream(file) ? await streamToString(file as Stream) : file as Buffer
+    if(replaceOnExists){
+      const exists = await this.minioClient.getObject(namespace, objectId)
+      if (exists) {
+        let n = objectId.split('.') // spliting extension
+        if(n.length > 1) {
+          n[n.length - 2] += '-'
+          objectId = n.join('.')
+        }
+        else objectId += '-'
+        return await this.uploadFile(context, namespace, objectId, file as Buffer)
       }
-      else objectId += '-'
+      return this.minioClient.putObject(namespace, objectId, data)
     }
-    await this.minioClient.putObject(namespace, objectId, file as Buffer)
-    
+    return this.minioClient.putObject(namespace, objectId, data)
   }
   async deleteFile(context: Context, namespace:string, objectId: string): Promise<void> {
     const exists = await this.minioClient.getObject(namespace, objectId)

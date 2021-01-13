@@ -45,6 +45,9 @@ services:
     restart: unless-stopped
     environment: 
       - DSN=mysql://productzilla:productzilla@mariadb:3306/productzilla
+      - OBJECT_STORAGE_URL=minio://http://minio:9000
+      - OBJECT_STORAGE_ACCESS_KEY=minio
+      - OBJECT_STORAGE_SECRET_KEY=minio123
     networks:
       default:
   core-service-migrator:
@@ -66,6 +69,9 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
-
+    networks: 
+      default:
+        aliases: 
+          - minio.productzilla.internal
 networks:
   default:

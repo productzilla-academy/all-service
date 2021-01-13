@@ -8,6 +8,8 @@ import { getPage, getSize } from "./global";
 import { to } from 'await-to-js'
 import { Paginated } from "../../../core/core.types";
 import { getCareerName } from "./career";
+import { UploadedFile } from "express-fileupload";
+
 
 export const courseParams = {
   uuid: 'course_uuid',
@@ -20,6 +22,8 @@ export const getCourseUUID = (r: RestRequest): string => r.params[courseParams.u
 export const getTutor = (r: RestRequest): string => r.params[courseParams.tutor] || r.body[courseParams.tutor]
 
 export const getLevel = (r: RestRequest): string => r.params[courseParams.level] || r.query[courseParams.level] as string
+
+export const getImage = (r: RestRequest): UploadedFile => r.files.image as UploadedFile
 
 export const getCourseBody = (r: RestRequest): Course => ({
   uuid: getCourseUUID(r),
@@ -105,6 +109,11 @@ export const courseController = (c: ConfigProvider, m: CoreManager) => ({
   async deleteCourse(r: RestRequest, w: Response){
     const course = await m.courseManager().storage().deleteCourse(r.context, getCourseUUID(r))
     w.status(202).send(course)
+  },
+  async updateCover(r: RestRequest, w: Response){
+    const image = getImage(r)
+    const course = await m.courseManager().objectStorage().changeCourseCover(r.context, getCourseUUID(r), image.data)
+    w.status(201).send(course)
   }
 })
 

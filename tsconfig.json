@@ -8,5 +8,8 @@
     "outDir": "./dist",
     "typeRoots": ["node_modules/@types"]
   },
-  "include": ["bin/app.ts"]
+  "include": [
+    "bin/app.ts",
+    "types/custom.d.ts"
+  ]
 }
