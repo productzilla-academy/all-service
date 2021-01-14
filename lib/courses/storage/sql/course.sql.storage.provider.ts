@@ -72,14 +72,6 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
         created: element.created,
         description: element.description,
         uuid: element.uuid,
-        level: {
-          career: {
-            name: element.career_name
-          },
-          name: element.level_name,
-          uuid: element.level_uuid,
-          number: element.level_number
-        },
         number: element.number,
         status: element.status,
         name: element.name,
@@ -112,14 +104,6 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
     const c: Course = {
       description: course.description,
       name: course.name,
-      level: {
-        career: {
-          name: course.career_name
-        },
-        uuid: course.level_uuid,
-        name: course.level_name,
-        number: course.level_number
-      },
       open: course.open,
       number: course.number,
       status: course.status,

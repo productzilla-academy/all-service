@@ -6,10 +6,6 @@ export interface Career {
   updated?: string
   id?: number
 }
-export interface Level  extends Generic {
-  name: string
-  description?: string
-  career: Career
-  number: number
+export interface Level  extends Career {
 }
 export default Career

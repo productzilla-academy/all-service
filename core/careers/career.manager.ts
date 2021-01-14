@@ -6,8 +6,7 @@ export default interface CareerManager {
   fetchCareer(context: Context): Promise<Career[]>
   deleteCareer(context: Context, careerName: string): Promise<void>
   
-  createCareerLevel(context: Context, careerName: string, level: Level): Promise<void>
-  fetchCareerLevel(context: Context, careerName: string): Promise<Level[]>
-  deleteLevel(context: Context, levelUUID: string): Promise<void>
-
+  createLevel(context: Context, level: Level): Promise<void>
+  fetchLevel(context: Context): Promise<Level[]>
+  deleteLevel(context: Context, levelName: string): Promise<void>
 }

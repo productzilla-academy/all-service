@@ -28,9 +28,6 @@ export const getImage = (r: RestRequest): UploadedFile => r.files.image as Uploa
 export const getCourseBody = (r: RestRequest): Course => ({
   uuid: getCourseUUID(r),
   description: r.body.description,
-  level: {
-    uuid: r.body.level && r.body.level.uuid
-  } as any as Level,
   name: r.body.name,
   number: r.body.number,
   open: r.body.open ? new Date(r.body.open) : new Date(),

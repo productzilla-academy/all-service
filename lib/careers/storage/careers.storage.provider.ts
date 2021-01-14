@@ -30,15 +30,12 @@ export class CarrerStorageProvider implements CareerManager{
     this.coldDB && await this.coldDB.deleteCareer(context, careerName)
     this.hotDB && await this.hotDB.deleteCareer(context, careerName)
   }
-  async createCareerLevel(context: Context, careerName: string, level: Level): Promise<void> {
-
-    const uuid = UUID.v5(careerName + (new Date()).getTime(), UUID.v5.URL)
-    level.uuid = uuid
-    this.coldDB && await this.coldDB.createCareerLevel(context, careerName, level)
-    this.hotDB && await this.hotDB.createCareerLevel(context,  careerName, level)
+  async createLevel(context: Context, level: Level): Promise<void> {
+    this.coldDB && await this.coldDB.createLevel(context, level)
+    this.hotDB && await this.hotDB.createLevel(context, level)
   }
-  async fetchCareerLevel(context: Context, careerName: string): Promise<Level[]> {
-    const levels = this.hotDB ? await this.hotDB.fetchCareerLevel(context, careerName) : await this.coldDB.fetchCareerLevel(context, careerName)
+  async fetchLevel(context: Context): Promise<Level[]> {
+    const levels = this.hotDB ? await this.hotDB.fetchLevel(context) : await this.coldDB.fetchLevel(context)
     return levels
   }
   async deleteLevel(context: Context, levelUUID: string): Promise<void> {
