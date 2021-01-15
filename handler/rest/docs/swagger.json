@@ -1928,6 +1928,15 @@
           }
         ]
       },
+      "UUIDObject": {
+        "type": "object",
+        "description": "Can be null / undefined",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          }
+        }
+      },
       "CourseModuleRequestBody": {
         "allOf": [
           {
@@ -1950,8 +1959,7 @@
                 "description": "its depend on uploaded module files"
               },
               "parent_module": {
-                "type": "string",
-                "description": "Module uuid"
+                "$ref": "#/components/schemas/UUIDObject"
               }
             }
           }

@@ -31,8 +31,9 @@ export default class MinioObjectStorageProvider implements ObjectStorageProvider
   async uploadFile(context: Context, namespace:string, objectId: string, file: Buffer | Stream, replaceOnExists?: boolean) {
     const data: Buffer | string = isStream(file) ? await streamToString(file as Stream) : file as Buffer
     if(!replaceOnExists){
-      const exists = await minioClient.getObject(namespace, objectId)
-      if (exists) {
+
+      const [err, exists] =  await to(minioClient.getObject(namespace, objectId))
+      if (!err) {
         let n = objectId.split('.') // spliting extension
         if(n.length > 1) {
           n[n.length - 2] += '-'
