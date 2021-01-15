@@ -22,12 +22,6 @@ export const getModuleBody = (r: RestRequest): Module => ({
   parent_module: r.body.parent_module
 } as Module)
 
-interface HerarcialModule {
-  uuid: string
-  name: string
-  sub_modules: HerarcialModule[] 
-}
-
 export const moduleController = (c: ConfigProvider, m: CoreManager) => ({
   async fetchModules(r: RestRequest, w: Response){
     let modules = await m.courseManager().storage().fetchModules(r.context, getCourseUUID(r))

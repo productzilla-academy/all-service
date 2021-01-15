@@ -60,25 +60,15 @@
         }
       }
     },
-    "/careers/{career_name}/levels": {
+    "/levels": {
       "get": {
         "tags": [
           "job"
         ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "career_name",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "description": "Fetch career job level by career name",
         "responses": {
           "200": {
-            "$ref": "#/components/responses/CareerLevelsResponse"
+            "$ref": "#/components/responses/LevelsResponse"
           }
         }
       },
@@ -86,18 +76,8 @@
         "tags": [
           "job"
         ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "career_name",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "requestBody": {
-          "$ref": "#/components/requestBodies/CareerLevelRequestBody"
+          "$ref": "#/components/requestBodies/LevelRequestBody"
         },
         "responses": {
           "201": {
@@ -106,7 +86,7 @@
         }
       }
     },
-    "/careers/{career_name}/levels/{level_id}": {
+    "/levels/{level_name}": {
       "delete": {
         "tags": [
           "job"
@@ -114,15 +94,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "career_name",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "name": "level_id",
+            "name": "level_name",
             "required": true,
             "schema": {
               "type": "string"
@@ -185,6 +157,59 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/PaginatedCourse"
+          }
+        }
+      }
+    },
+    "/courses/{course_uuid}": {
+      "get": {
+        "tags": [
+          "course"
+        ],
+        "description": "Get specifict course",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/CourseResponse"
+          }
+        }
+      }
+    },
+    "/tutor/{tutor_name}/courses/{course_uuid}/cover": {
+      "put": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/ImageUpdateRequest"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/CourseResponse"
           }
         }
       }
@@ -285,7 +310,7 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/components/responses/CourseByCareerLevelResponse"
+            "$ref": "#/components/responses/CourseByLevelResponse"
           }
         }
       }
@@ -1314,25 +1339,25 @@
           }
         }
       },
-      "CareerLevelsResponse": {
+      "LevelsResponse": {
         "description": "Career Level request",
         "content": {
           "application/json": {
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/components/schemas/CareerLevel"
+                "$ref": "#/components/schemas/Level"
               }
             }
           }
         }
       },
-      "CareerLevelResponse": {
+      "LevelResponse": {
         "description": "Career Level request",
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/CareerLevel"
+              "$ref": "#/components/schemas/Level"
             }
           }
         }
@@ -1357,12 +1382,12 @@
           }
         }
       },
-      "CourseByCareerLevelResponse": {
+      "CourseByLevelResponse": {
         "description": "Courses by career",
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/CourseByCareerLevelResponse"
+              "$ref": "#/components/schemas/CourseByLevelResponse"
             }
           }
         }
@@ -1475,12 +1500,12 @@
           }
         }
       },
-      "CareerLevelRequestBody": {
+      "LevelRequestBody": {
         "description": "Career Level request",
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/CareerLevelRequestBody"
+              "$ref": "#/components/schemas/LevelRequestBody"
             }
           }
         }
@@ -1541,6 +1566,21 @@
               "type": "array",
               "items": {
                 "$ref": "#/components/schemas/QuizQuestionRequest"
+              }
+            }
+          }
+        }
+      },
+      "ImageUpdateRequest": {
+        "content": {
+          "multipart/form-data": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "image": {
+                  "type": "string",
+                  "format": "binary"
+                }
               }
             }
           }
@@ -1634,12 +1674,10 @@
           {
             "type": "object",
             "properties": {
-              "level": {
-                "type": "object",
-                "properties": {
-                  "uuid": {
-                    "type": "string"
-                  }
+              "career": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CareerLevel"
                 }
               },
               "number": {
@@ -1688,44 +1726,46 @@
           }
         }
       },
-      "CareerLevel": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Generic"
-          },
-          {
-            "$ref": "#/components/schemas/CareerLevelRequestBody"
-          }
-        ]
+      "Level": {
+        "$ref": "#/components/schemas/LevelRequestBody"
       },
-      "CareerLevelRequestBody": {
+      "LevelRequestBody": {
         "allOf": [
-          {
-            "$ref": "#/components/schemas/General"
-          },
           {
             "type": "object",
             "properties": {
-              "career": {
-                "$ref": "#/components/schemas/Career"
+              "name": {
+                "type": "string",
+                "description": "Level name"
               },
               "number": {
                 "type": "number",
                 "description": "Number of sorting level"
-              },
-              "description": {
-                "type": "string"
               }
             }
           }
         ]
       },
-      "CourseByCareerLevelResponse": {
+      "CareerLevel": {
+        "type": "object",
+        "properties": {
+          "career": {
+            "$ref": "#/components/schemas/Career"
+          },
+          "level": {
+            "$ref": "#/components/schemas/Level"
+          },
+          "number": {
+            "type": "number"
+          }
+        }
+      },
+      "CourseByLevelResponse": {
         "type": "array",
         "items": {
           "properties": {
             "level": {
-              "$ref": "#/components/schemas/CareerLevel"
+              "$ref": "#/components/schemas/Level"
             },
             "courses": {
               "$ref": "#/components/schemas/PaginatedCourse"

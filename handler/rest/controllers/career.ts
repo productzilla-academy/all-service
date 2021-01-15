@@ -5,10 +5,10 @@ import CoreManager from "../../../core/core.manager";
 import { RestRequest } from "../types";
 
 export const careerParam = {
-  uuid: 'level_uuid',
+  level: 'level_name',
   name: 'career_name'
 }
-export const getLevelUUID = (r: RestRequest): string => r.params[careerParam.uuid]
+export const getLevelName = (r: RestRequest): string => r.params[careerParam.level]
 export const getCareerName = (r: RestRequest): string => r.params[careerParam.name] && r.params[careerParam.name].toLocaleLowerCase().split(' ').join('-') 
 
 const getCareerBody = (r: RestRequest): Career => ({
@@ -17,11 +17,6 @@ const getCareerBody = (r: RestRequest): Career => ({
 
 const getLevelBody = (r: RestRequest): Level => ({
   name: r.body.name,
-  career: {
-    name: getCareerName(r)
-  },
-  description: r.body.description,
-  uuid: undefined,
   number: r.body.number
 })
 
@@ -39,16 +34,16 @@ export const careerController = (configProvider: ConfigProvider, m: CoreManager)
     const c = await m.careerManager().deleteCareer(r.context, getCareerName(r))
     w.status(202).send(c)
   },
-  async fetchCareerLevel(r: RestRequest, w: Response) {
-    const c = await m.careerManager().fetchCareerLevel(r.context, getCareerName(r))
+  async fetchLevel(r: RestRequest, w: Response) {
+    const c = await m.careerManager().fetchLevel(r.context)
     w.status(200).send(c)
   },
-  async createCareerLevel(r: RestRequest, w: Response) {
-    const c = await m.careerManager().createCareerLevel(r.context, getCareerName(r), getLevelBody(r))
+  async createLevel(r: RestRequest, w: Response) {
+    const c = await m.careerManager().createLevel(r.context, getLevelBody(r))
     w.status(201).send(c)
   },
-  async deleteCareerLevel(r: RestRequest, w: Response) {
-    const c = await m.careerManager().deleteLevel(r.context, getLevelUUID(r))
+  async deleteLevel(r: RestRequest, w: Response) {
+    const c = await m.careerManager().deleteLevel(r.context, getLevelName(r))
     w.status(202).send(c)
   },
 })

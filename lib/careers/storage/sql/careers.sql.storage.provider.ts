@@ -61,10 +61,10 @@ export default class CareerSQLProvider implements CareerManager {
     await this.getLevelDB().insert({ ...level})
   }
   async fetchLevel(context: Context): Promise<Level[]> {
-    const [levels] = await this.getLevelDB()
+    const levels = await this.getLevelDB().orderBy('number', 'asc')
     return levels
   }
   async deleteLevel(context: Context, levelUUID: string): Promise<void> {
-    await this.getLevelDB().del().where(`uuid`, levelUUID)
+    await this.getLevelDB().del().where(`name`, levelUUID)
   }
 }

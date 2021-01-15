@@ -7,5 +7,6 @@ export interface Career {
   id?: number
 }
 export interface Level  extends Career {
+  number: number
 }
 export default Career

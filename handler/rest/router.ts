@@ -10,6 +10,7 @@ import courseController, { courseParams } from "./controllers/course";
 import moduleController, { moduleParams } from "./controllers/module";
 import courceCertificateController, { certificateParams } from "./controllers/course.certificate";
 import quizController, { quizParams } from "./controllers/quiz";
+import expressFileUpload from 'express-fileupload'
 require('express-async-errors')
 
 export const RestRouter = (c: ConfigProvider, m: CoreManager) => {
@@ -21,14 +22,21 @@ export const RestRouter = (c: ConfigProvider, m: CoreManager) => {
   const quizCtrl = quizController(c, m)
 
   router.use(bodyParser.json())
+  router.use(expressFileUpload({
+    useTempFiles: true,
+    tempFileDir:'/var',
+    debug: true,
+    safeFileNames: true
+  }))
+
   router.use('/api-docs', swaggerExpress.serve, swaggerExpress.setup(docs));
 
   router.get(`/careers`, careerCtrl.fetchCareer)
   router.post(`/careers`, careerCtrl.createCareer)
   router.delete(`/careers/:${careerParam.name}`, careerCtrl.deleteCareer)
-  router.get(`/careers/:${careerParam.name}/levels`, careerCtrl.fetchCareerLevel)
-  router.post(`/careers/:${careerParam.name}/levels`, careerCtrl.createCareerLevel)
-  router.delete(`/careers/:${careerParam.name}/levels/:${careerParam.uuid}`, careerCtrl.deleteCareerLevel)
+  router.get(`/levels`, careerCtrl.fetchLevel)
+  router.post(`/levels`, careerCtrl.createLevel)
+  router.delete(`/levels/:${careerParam.level}`, careerCtrl.deleteLevel)
   router.get(`/careers/:${careerParam.name}/courses`, courseCtrl.fetchCourseByCareer)
 
   router.get(`/courses`, courseCtrl.fetchCourse)
@@ -36,6 +44,7 @@ export const RestRouter = (c: ConfigProvider, m: CoreManager) => {
 
   router.get(`/courses/:${courseParams.uuid}/certificates`, certificateCtrl.fetch)
   router.get(`/courses/:${courseParams.uuid}/certificates/:${certificateParams.certificateUUID}`, certificateCtrl.get)
+
   router.get(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/certificates`, certificateCtrl.fetch)
   router.get(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/certificates/:${certificateParams.certificateUUID}`, certificateCtrl.get)
   router.post(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/certificates`, certificateCtrl.create)
@@ -50,6 +59,7 @@ export const RestRouter = (c: ConfigProvider, m: CoreManager) => {
   router.get(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}`, courseCtrl.getCourse)
   router.put(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}`, courseCtrl.updateCourse)
   router.delete(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}`, courseCtrl.deleteCourse)
+  router.put(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/cover`, courseCtrl.updateCover)
 
   router.get(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules`, moduleCtrl.fetchModules)
   router.get(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/herarcial`, moduleCtrl.herarcialModules)

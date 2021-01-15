@@ -29,11 +29,11 @@ export const getCourseBody = (r: RestRequest): Course => ({
   uuid: getCourseUUID(r),
   description: r.body.description,
   name: r.body.name,
-  number: r.body.number,
   open: r.body.open ? new Date(r.body.open) : new Date(),
   status: r.body.status,
   tutor: getTutor(r),
-  overview: r.body.overview
+  overview: r.body.overview,
+  career: r.body.career
 })
 
 export const courseController = (c: ConfigProvider, m: CoreManager) => ({
@@ -60,7 +60,7 @@ export const courseController = (c: ConfigProvider, m: CoreManager) => ({
     w.send(courses)
   },
   async fetchCourseByCareer(r: RestRequest, w: Response){
-    const levels = await m.careerManager().fetchCareerLevel(r.context, getCareerName(r))
+    const levels = await m.careerManager().fetchLevel(r.context)
     const p: Promise<[Error, Paginated<Course[]>]>[] = []
     for (const i in levels) {
       const level = levels[i]
@@ -71,7 +71,8 @@ export const courseController = (c: ConfigProvider, m: CoreManager) => ({
           .fetchCourses(
             r.context, {
               search: {
-                level: level.uuid
+                level: level.name,
+                career: getCareerName(r)
               }
             }
           )

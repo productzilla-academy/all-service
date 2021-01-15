@@ -1,3 +1,4 @@
+import { Career, Level } from "../careers"
 import { General, Resource } from "../core.types"
 
 export enum CourseStatus {
@@ -8,15 +9,15 @@ export enum CourseStatus {
 }
 
 export interface CourseCareer {
-  level: string
-  career: string
+  level: Level
+  career: Career
+  number: number
 }
 
 export interface Course extends General {
   tutor: string
   open: Date
-  career?: CourseCareer | CourseCareer[]
-  number: number
+  career?: CourseCareer[]
   status: CourseStatus
   cover?: string
 }
@@ -25,6 +26,7 @@ export interface Course extends General {
 export interface CourseQueryParam {
   tutor?: string
   level?: string
+  career?: string
 }
 
 
