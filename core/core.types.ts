@@ -5,8 +5,8 @@
 // 	Created time.Time `json:"created"`
 // 	Updated time.Time `json:"updated"`
 
-import Context from "../context";
-import Assets from "./assets/asset";
+import Context from "../context"
+import Assets from "./assets/asset"
 
 // }
 export interface Generic {

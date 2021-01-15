@@ -1,8 +1,8 @@
 import knex from 'knex'
 import ConfigProvider from '../../../../config'
-import { INDEX_TABLE_CAREERS, INDEX_TABLE_LEVELS} from "../../../careers";
-import { INDEX_TABLE_BILLING_PLANS, INDEX_TABLE_TRANSACTIONS} from "../../../transactions";
-import { INDEX_TABLE_ENROLLMENTS, INDEX_TABLE_LEARN_PROCESS, INDEX_TABLE_QUIZ_ANSWER } from "../../../enrollment";
+import { INDEX_TABLE_CAREERS, INDEX_TABLE_LEVELS} from "../../../careers"
+import { INDEX_TABLE_BILLING_PLANS, INDEX_TABLE_TRANSACTIONS} from "../../../transactions"
+import { INDEX_TABLE_ENROLLMENTS, INDEX_TABLE_LEARN_PROCESS, INDEX_TABLE_QUIZ_ANSWER } from "../../../enrollment"
 import { 
   INDEX_TABLE_COURSES, 
   INDEX_TABLE_MODULES,
@@ -10,7 +10,7 @@ import {
   INDEX_TABLE_QUIZ,
   INDEX_TABLE_RESULT_CERTIFICATE,
   INDEX_TABLE_QUESTION_OPTIONS
-} from "../../../courses";
+} from "../../../courses"
 const path = require('path')
 var SQLConn: knex = null
 export const tables = {

@@ -1,6 +1,6 @@
-import { Generic } from "../core.types";
-import { BillingPlan } from "./billing";
-import { Student } from "../enrollment/enroll";
+import { Generic } from "../core.types"
+import { BillingPlan } from "./billing"
+import { Student } from "../enrollment/enroll"
 
 export enum TransactionStatus {
   PENDING = 'pending',

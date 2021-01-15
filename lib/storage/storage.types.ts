@@ -1,4 +1,4 @@
-import { DSNProtocol } from "../../config";
+import { DSNProtocol } from "../../config"
 
 export interface SearchItem {
   regex?: string

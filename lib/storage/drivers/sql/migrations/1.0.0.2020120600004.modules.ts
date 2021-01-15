@@ -24,5 +24,5 @@ export const up = (knex: Knex, promise: Promise<any>) => {
 }
 
 export const down = (knex: Knex, promise: Promise<any>) => {
-  return knex.schema.dropTable(tables.INDEX_TABLE_MODULES);
+  return knex.schema.dropTable(tables.INDEX_TABLE_MODULES)
 }

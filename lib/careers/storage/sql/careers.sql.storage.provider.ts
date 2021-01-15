@@ -1,9 +1,9 @@
-import * as knex from "knex";
-import ConfigProvider from "../../../../config";
-import Context from "../../../../context";
-import CareerManager, { Career, Level } from "../../../../core/careers";
-import { DuplicateError, NotFoundError } from "../../../../errors";
-import SQLConnection, { tables } from "../../../storage/drivers/sql/connection";
+import * as knex from "knex"
+import ConfigProvider from "../../../../config"
+import Context from "../../../../context"
+import CareerManager, { Career, Level } from "../../../../core/careers"
+import { DuplicateError, NotFoundError } from "../../../../errors"
+import SQLConnection, { tables } from "../../../storage/drivers/sql/connection"
 import {to} from 'await-to-js'
 export default class CareerSQLProvider implements CareerManager {
   configProvider: ConfigProvider

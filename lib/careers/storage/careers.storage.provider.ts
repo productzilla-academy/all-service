@@ -1,9 +1,9 @@
-import ConfigProvider from "../../../config";
-import Context from "../../../context";
-import CareerManager, { Career, Level } from "../../../core/careers";
-import { SQLDBProtocols } from "../../storage/storage.types";
-import CareerElasticsearchProvider from "./elasticsearch/careers.elasticsearch.storage.provider";
-import CareerSQLProvider from "./sql/careers.sql.storage.provider";
+import ConfigProvider from "../../../config"
+import Context from "../../../context"
+import CareerManager, { Career, Level } from "../../../core/careers"
+import { SQLDBProtocols } from "../../storage/storage.types"
+import CareerElasticsearchProvider from "./elasticsearch/careers.elasticsearch.storage.provider"
+import CareerSQLProvider from "./sql/careers.sql.storage.provider"
 export class CarrerStorageProvider implements CareerManager{
   configProvider: ConfigProvider
 

@@ -1,6 +1,6 @@
-import { Generic } from "../core.types";
-import Course from "../courses/course";
-import { BillingPlan } from "../transactions/billing";
+import { Generic } from "../core.types"
+import Course from "../courses/course"
+import { BillingPlan } from "../transactions/billing"
 export interface Student {
   username: string
 }

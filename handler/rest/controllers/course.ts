@@ -1,14 +1,14 @@
-import { Response } from "express";
-import ConfigProvider from "../../../config";
-import { Level } from "../../../core/careers";
-import CoreManager from "../../../core/core.manager";
-import { Course } from "../../../core/courses";
-import { RestRequest } from "../types";
-import { getPage, getSize } from "./global";
+import { Response } from "express"
+import ConfigProvider from "../../../config"
+import { Level } from "../../../core/careers"
+import CoreManager from "../../../core/core.manager"
+import { Course, Extras } from "../../../core/courses"
+import { RestRequest } from "../types"
+import { getPage, getSize } from "./global"
 import { to } from 'await-to-js'
-import { Paginated } from "../../../core/core.types";
-import { getCareerName } from "./career";
-import { UploadedFile } from "express-fileupload";
+import { Paginated } from "../../../core/core.types"
+import { getCareerName } from "./career"
+import { UploadedFile } from "express-fileupload"
 
 
 export const courseParams = {
@@ -33,7 +33,11 @@ export const getCourseBody = (r: RestRequest): Course => ({
   status: r.body.status,
   tutor: getTutor(r),
   overview: r.body.overview,
-  career: r.body.career
+  career: r.body.career,
+  extras: r.body.extras ? {
+    active_price: r.body.extras.active_price,
+    price: r.body.extras.price
+  } : {} as Extras
 })
 
 export const courseController = (c: ConfigProvider, m: CoreManager) => ({
@@ -108,6 +112,8 @@ export const courseController = (c: ConfigProvider, m: CoreManager) => ({
     const course = await m.courseManager().storage().deleteCourse(r.context, getCourseUUID(r))
     w.status(202).send(course)
   },
+
+  
   async updateCover(r: RestRequest, w: Response){
     const image = getImage(r)
     const course = await m.courseManager().objectStorage().changeCourseCover(r.context, getCourseUUID(r), image.data)

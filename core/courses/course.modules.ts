@@ -2,9 +2,9 @@
 // type Module struct {
 // 	core.General
 
-import { General } from "../core.types";
-import Course from "./course";
-import Quiz from "./course.quiz";
+import { General } from "../core.types"
+import Course from "./course"
+import Quiz from "./course.quiz"
 export interface Module extends General{
   course: Course
   parent_module?: Module
@@ -12,7 +12,8 @@ export interface Module extends General{
   content: string
   quiz?: Quiz
   weight: number
-  number: number
+  number: number,
+  material: string
 }
 
 export interface HerarcialModule {

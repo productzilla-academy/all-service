@@ -1,13 +1,13 @@
-import Context from "../../context";
-import { ObjectValueOf, Paginated, PaginationParam } from "../core.types";
-import { BillingPlan } from "../transactions/billing";
-import Course from "../courses/course";
-import { Enrollment, Student } from "./enroll";
-import Module from "../courses/course.modules";
-import Quiz from "../courses/course.quiz";
-import { LearnProcess } from "./learn.process";
-import { QuizResult } from "./quiz.result";
-import { Question } from "../courses/course.quiz.questions";
+import Context from "../../context"
+import { ObjectValueOf, Paginated, PaginationParam } from "../core.types"
+import { BillingPlan } from "../transactions/billing"
+import Course from "../courses/course"
+import { Enrollment, Student } from "./enroll"
+import Module from "../courses/course.modules"
+import Quiz from "../courses/course.quiz"
+import { LearnProcess } from "./learn.process"
+import { QuizResult } from "./quiz.result"
+import { Question } from "../courses/course.quiz.questions"
 export interface Param {
   pagination: PaginationParam
   search: ObjectValueOf<string>

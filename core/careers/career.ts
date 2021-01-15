@@ -1,4 +1,4 @@
-import { Generic } from "../core.types";
+import { Generic } from "../core.types"
 
 export interface Career {
   name: string

@@ -1,4 +1,4 @@
-import { Certificate, Course, CourseQueryParam, CourseStorageManager, HerarcialModule, Module, Options, Question, QuestionType, Quiz, CourseCareer } from '../../../../core/courses'
+import { Certificate, Course, CourseQueryParam, CourseStorageManager, HerarcialModule, Module, Options, Question, QuestionType, Quiz, CourseCareer, Extras } from '../../../../core/courses'
 import Context from '../../../../context'
 import { Paginated, Param } from '../../../../core/core.types'
 import SQLConnection, { tables } from '../../../storage/drivers/sql/connection'
@@ -46,7 +46,7 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
     const r: CourseCareer[] = []
     for (const p in cl) {
       if (Object.prototype.hasOwnProperty.call(cl, p)) {
-        const element = cl[p];
+        const element = cl[p]
         r.push({
           career: {
             name: element.career
@@ -67,7 +67,8 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
       `${tables.INDEX_TABLE_COURSES}.open`, 
       `${tables.INDEX_TABLE_COURSES}.name`,
       `${tables.INDEX_TABLE_COURSES}.status`,
-      `${tables.INDEX_TABLE_COURSES}.description`
+      `${tables.INDEX_TABLE_COURSES}.description`,
+      `${tables.INDEX_TABLE_COURSES}.extras`
       )
     
       courseDB = param && param.search && param.search.career && courseDB.whereIn(`${tables.INDEX_TABLE_COURSES}.id`, function(){
@@ -106,7 +107,9 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
           status: element.status,
           name: element.name,
           tutor: element.tutor,
-          open: element.open
+          cover: `/${element.uuid}/images/cover`,
+          open: element.open,        
+          extras: JSON.parse(element.extras) as Extras
         }
       ))
     }
@@ -130,6 +133,7 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
     
     const c: Course = {
       description: course.description,
+      cover: `/${courseUUID}/images/cover`,
       name: course.name,
       open: course.open,
       status: course.status,
@@ -140,6 +144,7 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
       overview: course.overview,
       updated: course.updated,
       link_path: course.link_path,
+      extras: JSON.parse(course.extras) as Extras,
       id: course.id
     }
     return c
@@ -150,7 +155,8 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
   async createCourse(context: Context, course: Course): Promise<Course> {
     const { career } = course
     delete course.career
-    const inserted = await this.courseDB().insert(course, ['id'])
+
+    const inserted = await this.courseDB().insert({...course, extras: JSON.stringify(course.extras)}, ['id'])
     if(career && career.length > 0) {
       for (const p in career) {
         const element = career[p]
@@ -158,10 +164,11 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
           level: element.level.name,
           career: element.career.name,
           number: element.number,
-          course: inserted[0].id
+          course: inserted[0].id,
         })
       }
     }
+    
     return {
       ...course,
       career
@@ -178,12 +185,13 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
           level: element.level.name,
           career: element.career.name,
           number: element.number,
-          course: existing.id
+          course: existing.id,
         })
       }
     }
     delete course.career
-    await this.courseDB().update({ ...course }).where({ uuid })
+    await this.courseDB().update({ ...course, 
+      extras: JSON.stringify(course.extras) }).where({ uuid })
     return {
       ...course,
       uuid,
@@ -314,7 +322,7 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
       const p = []
       const index: number[] = []
       const h: HerarcialModule[] = []
-      for (let i = 0; i< modules.length ; i++) {
+      for (let i = 0; i< modules.length  ; i++) {
           const element = modules[i]
           if (element.sub_modules_count) {
             index.push(i)
@@ -328,8 +336,8 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
       }
       
       const s = await Promise.all(p)
-      for (let i = 0; i < s.length; i++) {
-        const element = s[i];
+      for (let i = 0; i < s.length ; i++) {
+        const element = s[i]
         const c = await getChild(context, element)
         h[index[i]].sub_modules.push(
             ...c

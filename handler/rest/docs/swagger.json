@@ -186,6 +186,9 @@
     },
     "/tutor/{tutor_name}/courses/{course_uuid}/cover": {
       "put": {
+        "tags": [
+          "assets"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -209,7 +212,84 @@
         },
         "responses": {
           "200": {
-            "$ref": "#/components/responses/CourseResponse"
+            "$ref": "#/components/responses/Message"
+          }
+        }
+      }
+    },
+    "/tutor/{tutor_name}/courses/{course_uuid}/modules/{module_uuid}/files": {
+      "post": {
+        "tags": [
+          "assets"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "module_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/FileRequest"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Message"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "assets"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "module_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/StringArray"
           }
         }
       }
@@ -1316,6 +1396,19 @@
           }
         }
       },
+      "StringArray": {
+        "description": "Content",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
       "Career": {
         "description": "Content",
         "content": {
@@ -1585,6 +1678,21 @@
             }
           }
         }
+      },
+      "FileRequest": {
+        "content": {
+          "multipart/form-data": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "files": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "schemas": {
@@ -1661,6 +1769,18 @@
               },
               "tutor": {
                 "type": "string"
+              },
+              "extras": {
+                "type": "object",
+                "description": "undecalred field in extras can be added",
+                "properties": {
+                  "price": {
+                    "type": "number"
+                  },
+                  "active_price": {
+                    "type": "number"
+                  }
+                }
               }
             }
           }
@@ -1824,6 +1944,10 @@
               },
               "weight": {
                 "type": "number"
+              },
+              "material": {
+                "type": "string",
+                "description": "its depend on uploaded module files"
               },
               "parent_module": {
                 "type": "string",

@@ -1,10 +1,11 @@
-import Context from "../../context";
-import { ObjectValueOf, Paginated, PaginationParam, Param, UploadBulkFiles, UploadSingleFile } from "../core.types";
-import Course, { CourseQueryParam } from "./course";
-import Module, { HerarcialModule } from "./course.modules";
-import Quiz from "./course.quiz";
-import { Options, Question } from "./course.quiz.questions";
-import Certificate from "./course.result.certificate";
+import Context from "../../context"
+import { Paginated, Param} from "../core.types"
+import Course, { CourseQueryParam } from "./course"
+import Module, { HerarcialModule } from "./course.modules"
+import Quiz from "./course.quiz"
+import { Options, Question } from "./course.quiz.questions"
+import Certificate from "./course.result.certificate"
+import {PipeFunction} from '../core.object.storage.manager'
 
 export interface CourseStorageManager {
   fetchCourses(context: Context, param?: Param<CourseQueryParam>): Promise<Paginated<Course[]>>
@@ -43,22 +44,25 @@ export interface CourseStorageManager {
   updateModuleQuizQuestionOptions(context: Context, courseUUID: string, moduleUUID: string, quizUUID: string, questionUUID: string, options: Options[]): Promise<Options[]>
 }
 
-
 export interface CourseObjectStorageManager {
   changeCourseCover(context: Context, courseUUID: string, cover: Buffer): Promise<void>
-  pipeCourseCover(context: Context, courseUUID: string, pipe: any): void
+  pipeCourseCover(context: Context, courseUUID: string, pipe: PipeFunction): void
   uploadCourseFile(context: Context, courseUUID: string, file: Buffer, filename: string): Promise<void>
   deleteCourseFile(context: Context, couresUUID: string, objectID: string): Promise<void>
   fetchCourseFiles(context: Context, courseUUID: string): Promise<string[]>
-  pipeCourseFile(context: Context, courseUUID: string, fileName: string, pipe: any): void
+  pipeCourseFile(context: Context, courseUUID: string, fileName: string, pipe: PipeFunction): void
 
   uploadModuleCover (context: Context, courseUUID: string, moduleUUID: string, cover: Buffer): Promise<void>
-  pipeModuleCover (context: Context, courseUUID: string, moduleUUID: string, pipe: any): void
+  pipeModuleCover (context: Context, courseUUID: string, moduleUUID: string, pipe: PipeFunction): void
   
+  uploadModuleMaterial(context: Context, courseUUID: string, moduleUUID: string, file: Buffer): Promise<void>
+  pipeModuleMaterial(context: Context, courseUUID: string, moduleUUID: string, pipe: Function): Promise<void>
+
   uploadModuleFile(context: Context, courseUUID: string, moduleUUID: string, file: Buffer, filename: string): Promise<void>
   fetchModuleFiles (context: Context, courseUUID: string, moduleUUID: string): Promise<string[]>
   deleteModuleFile (context: Context, courseUUID: string, moduleUUID: string, objectID: string): Promise<void>
-  pipeModuleFile(context: Context, courseUUID: string, moduleUUID: string, fileName: string, pipe: any): void
+  pipeModuleFile(context: Context, courseUUID: string, moduleUUID: string, fileName: string, pipe: PipeFunction): void
+
 
 }
 

@@ -2,6 +2,7 @@ import ConfigProvider from "../config"
 import AssetManager from "./assets"
 import CareerManager from "./careers"
 import CoreManager from "./core.manager"
+import ObjectStorageManager from "./core.object.storage.manager"
 import CourseManager from "./courses"
 import EnrollmentManager from "./enrollment"
 import TransactionManager from "./transactions"
@@ -13,7 +14,7 @@ export default class CoreManagerDefault implements CoreManager {
   crm: CourseManager
   em: EnrollmentManager
   tm: TransactionManager
-
+  osm: ObjectStorageManager
   constructor(configProvider: ConfigProvider){
     this.configProvider = configProvider
   }
@@ -47,5 +48,11 @@ export default class CoreManagerDefault implements CoreManager {
   }
   setTransactionManager(m: TransactionManager) {
     this.tm = m
+  }
+  objectStorage(): ObjectStorageManager {
+    return this.osm
+  }
+  setObjectStorage(m: ObjectStorageManager) {
+    this.osm = m
   }
 } 

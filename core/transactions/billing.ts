@@ -1,5 +1,5 @@
-import { Generic } from "../core.types";
-import Course from "../courses/course";
+import { Generic } from "../core.types"
+import Course from "../courses/course"
 
 export enum SubscriptionType {
   ONE_TIME = 'one_time',

@@ -1,6 +1,6 @@
-import Context from "../../context";
-import { Paginated, Pagination } from "../../core/core.types";
-import { Search } from "./storage.types";
+import Context from "../../context"
+import { Paginated, Pagination } from "../../core/core.types"
+import { Search } from "./storage.types"
 
 export default interface StorageProvider {
   create<T>(context: Context, object: T): Promise<T>

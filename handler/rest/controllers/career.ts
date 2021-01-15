@@ -1,8 +1,8 @@
-import { Response } from "express";
-import ConfigProvider from "../../../config";
-import { Career, Level } from "../../../core/careers";
-import CoreManager from "../../../core/core.manager";
-import { RestRequest } from "../types";
+import { Response } from "express"
+import ConfigProvider from "../../../config"
+import { Career, Level } from "../../../core/careers"
+import CoreManager from "../../../core/core.manager"
+import { RestRequest } from "../types"
 
 export const careerParam = {
   level: 'level_name',

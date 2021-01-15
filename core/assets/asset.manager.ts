@@ -1,5 +1,5 @@
-import Context from "../../context";
-import Asset from "./asset";
+import Context from "../../context"
+import Asset from "./asset"
 
 export default interface AssetManager {
   upload(context: Context, asset: Asset): Promise<void>

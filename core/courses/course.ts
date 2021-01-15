@@ -8,6 +8,12 @@ export enum CourseStatus {
   DEACTIVATED = 3
 }
 
+export interface Extras {
+  price: number
+  active_price: number
+  [p: string]: any
+}
+
 export interface CourseCareer {
   level: Level
   career: Career
@@ -19,7 +25,8 @@ export interface Course extends General {
   open: Date
   career?: CourseCareer[]
   status: CourseStatus
-  cover?: string
+  cover?: string,
+  extras?: Extras
 }
 
 

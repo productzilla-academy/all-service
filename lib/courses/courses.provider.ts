@@ -1,8 +1,8 @@
-import ConfigProvider from "../../config";
-import Context from "../../context";
-import CourseManager, { CourseObjectStorageManager, CourseStorageManager } from "../../core/courses";
-import CourseObjectStorageProvider from "./object.storage/course.object.storage";
-import CourseStorageProvider from "./storage/courses.storage.provider";
+import ConfigProvider from "../../config"
+import Context from "../../context"
+import CourseManager, { CourseObjectStorageManager, CourseStorageManager } from "../../core/courses"
+import CourseObjectStorageProvider from "./object.storage/course.object.storage"
+import CourseStorageProvider from "./storage/courses.storage.provider"
 
 export default class CourseProvider implements CourseManager{
   oS: CourseObjectStorageManager

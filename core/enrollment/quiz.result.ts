@@ -1,8 +1,8 @@
-import { Generic } from "../core.types";
-import Module from "../courses/course.modules";
-import Quiz from "../courses/course.quiz";
-import { Question } from "../courses/course.quiz.questions";
-import { Student } from "./enroll";
+import { Generic } from "../core.types"
+import Module from "../courses/course.modules"
+import Quiz from "../courses/course.quiz"
+import { Question } from "../courses/course.quiz.questions"
+import { Student } from "./enroll"
 
 export interface QuizResult extends Generic {
   quiz: Quiz

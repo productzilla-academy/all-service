@@ -13,6 +13,7 @@ export const catchMiddleware = (log: BaseLogger) => {
         return n(e)
       }
       const errMessage = getErrorMessage(e)
+      e.code = e.code.toString() === 'NoSuchBucket' ? 404 : e.code
       if (e.code === 500 || typeof e.code !== 'number' || !e.code) {
         log.error({
           message: errMessage,

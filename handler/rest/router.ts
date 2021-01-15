@@ -1,35 +1,41 @@
-import { Router } from "express";
-import ConfigProvider from "../../config";
-import CoreManager from "../../core/core.manager";
+import { Router } from "express"
+import ConfigProvider from "../../config"
+import CoreManager from "../../core/core.manager"
 import careerController, { careerParam } from "./controllers/career"
 import * as docs from './docs/swagger.json'
 import swaggerExpress from 'swagger-ui-express'
 import bodyParser from 'body-parser'
-import catchMiddleware from "./middlewares/catch";
-import courseController, { courseParams } from "./controllers/course";
-import moduleController, { moduleParams } from "./controllers/module";
-import courceCertificateController, { certificateParams } from "./controllers/course.certificate";
-import quizController, { quizParams } from "./controllers/quiz";
+import catchMiddleware from "./middlewares/catch"
+import assetController from "./controllers/asset"
+import courseController, { courseParams } from "./controllers/course"
+import moduleController, { moduleParams } from "./controllers/module"
+import courceCertificateController, { certificateParams } from "./controllers/course.certificate"
+import quizController, { quizParams } from "./controllers/quiz"
 import expressFileUpload from 'express-fileupload'
+import { globalParams } from "./controllers/global"
+import cors from 'cors'
 require('express-async-errors')
 
 export const RestRouter = (c: ConfigProvider, m: CoreManager) => {
   const router = Router()
+  const uploadRouter = Router()
+  const publicRouter = Router()
   const careerCtrl = careerController(c, m)
   const courseCtrl = courseController(c, m)
   const moduleCtrl = moduleController(c, m)
   const certificateCtrl = courceCertificateController(c, m)
   const quizCtrl = quizController(c, m)
+  const assetCtrl = assetController(c, m)
+
 
   router.use(bodyParser.json())
-  router.use(expressFileUpload({
-    useTempFiles: true,
-    tempFileDir:'/var',
-    debug: true,
-    safeFileNames: true
-  }))
+  router.use(uploadRouter)
+  router.use(publicRouter)
 
-  router.use('/api-docs', swaggerExpress.serve, swaggerExpress.setup(docs));
+  uploadRouter.use(expressFileUpload())
+  publicRouter.use(cors())
+
+  router.use('/api-docs', swaggerExpress.serve, swaggerExpress.setup(docs))
 
   router.get(`/careers`, careerCtrl.fetchCareer)
   router.post(`/careers`, careerCtrl.createCareer)
@@ -59,7 +65,6 @@ export const RestRouter = (c: ConfigProvider, m: CoreManager) => {
   router.get(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}`, courseCtrl.getCourse)
   router.put(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}`, courseCtrl.updateCourse)
   router.delete(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}`, courseCtrl.deleteCourse)
-  router.put(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/cover`, courseCtrl.updateCover)
 
   router.get(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules`, moduleCtrl.fetchModules)
   router.get(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/herarcial`, moduleCtrl.herarcialModules)
@@ -87,7 +92,15 @@ export const RestRouter = (c: ConfigProvider, m: CoreManager) => {
 
   router.get(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/quizes/:${quizParams.quizUUID}/questions/:${quizParams.questionUUID}/options`, quizCtrl.fetchQuizOptions)
   router.put(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/quizes/:${quizParams.quizUUID}/questions/:${quizParams.questionUUID}/options`, quizCtrl.updateQuizOptions)
-  console.log(``)
+
+  uploadRouter.put(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/cover`, courseCtrl.updateCover)
+  uploadRouter.put(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/cover`, moduleCtrl.updateCover)
+  uploadRouter.post(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/files`, moduleCtrl.uploadFiles)
+  uploadRouter.get(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/files`, moduleCtrl.fileList)
+  uploadRouter.delete(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/files/:${globalParams.filename}`, moduleCtrl.fileList)
+
+  publicRouter.get(`/files/courses/:${courseParams.uuid}/*`, assetCtrl.fetchfile)
+
   router.use(catchMiddleware(c.logger()))
 
   return router

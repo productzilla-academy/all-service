@@ -1,9 +1,9 @@
-import { Response } from "express";
-import ConfigProvider from "../../../config";
-import CoreManager from "../../../core/core.manager";
-import { Certificate } from "../../../core/courses";
-import { RestRequest } from "../types";
-import { getCourseUUID } from "./course";
+import { Response } from "express"
+import ConfigProvider from "../../../config"
+import CoreManager from "../../../core/core.manager"
+import { Certificate } from "../../../core/courses"
+import { RestRequest } from "../types"
+import { getCourseUUID } from "./course"
 
 export const certificateParams = {
   certificateUUID: 'certificate_uuid'

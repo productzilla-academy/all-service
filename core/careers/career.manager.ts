@@ -1,5 +1,5 @@
-import Context from "../../context";
-import Career, { Level } from "./career";
+import Context from "../../context"
+import Career, { Level } from "./career"
 
 export default interface CareerManager {
   createCareer(context: Context, career: Career): Promise<void>

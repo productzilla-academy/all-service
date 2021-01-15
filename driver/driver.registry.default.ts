@@ -6,6 +6,7 @@ import Registry from "./driver.registry"
 import RegistryBase from "./driver.registry.base"
 import CarrerStorageProvider from "../lib/careers"
 import CourseProvider from "../lib/courses"
+import ObjectStorage from "../lib/object.storage"
 
 
 export class RegistryDefault extends RegistryBase implements Registry {
@@ -17,6 +18,7 @@ export class RegistryDefault extends RegistryBase implements Registry {
     const m = new CoreManagerDefault(configProvider)
     m.setCareerManager(new CarrerStorageProvider(configProvider))
     m.setCourseManager(new CourseProvider(configProvider))
+    m.setObjectStorage(ObjectStorage(configProvider))
     this.set(this).setConfig(configProvider).setManager(m)
   }
   init(): void {

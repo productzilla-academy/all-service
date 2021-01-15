@@ -11,8 +11,8 @@ services:
         - MYSQL_DATABASE=productzilla
         - MYSQL_USER=productzilla
         - MYSQL_PASSWORD=productzilla
-    # ports:
-    #   - 55559:3306
+    ports:
+      - 55558:3306
     networks:
       default:
 
