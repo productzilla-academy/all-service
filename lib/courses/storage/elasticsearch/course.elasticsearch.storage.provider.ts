@@ -13,7 +13,7 @@ export default class CourseElasticsearchProvider implements CourseStorageManager
   herarcialModules(context: Context, courseUUID: string): Promise<HerarcialModule[]> {
     throw new Error("Method not implemented.")
   }
-  fetchCourses(context: Context, param: Param<CourseQueryParam>): Promise<Paginated<Course[]>> {
+  fetchCourses(context: Context, param: Param<CourseQueryParam>): Promise<Paginated<Course>> {
     throw new Error("Method not implemented.")
   }
   getCourse(context: Context, courseUUID: string): Promise<Course> {

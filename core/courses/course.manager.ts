@@ -8,7 +8,7 @@ import Certificate from "./course.result.certificate"
 import {PipeFunction} from '../core.object.storage.manager'
 
 export interface CourseStorageManager {
-  fetchCourses(context: Context, param?: Param<CourseQueryParam>): Promise<Paginated<Course[]>>
+  fetchCourses(context: Context, param?: Param<CourseQueryParam>): Promise<Paginated<Course>>
   getCourse(context: Context, courseUUID: string): Promise<Course>
   checkCoursesLinkPath(context: Context, linkPath: string): Promise<void>
   createCourse(context: Context, course: Course): Promise<Course>

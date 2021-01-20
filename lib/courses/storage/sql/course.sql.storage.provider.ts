@@ -60,7 +60,7 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
     }
     return r
   }
-  async fetchCourses(context: Context, param?: Param<CourseQueryParam>): Promise<Paginated<Course[]>> {
+  async fetchCourses(context: Context, param?: Param<CourseQueryParam>): Promise<Paginated<Course>> {
     let courseDB = this.courseDB().select(
       `${tables.INDEX_TABLE_COURSES}.uuid`,
       `${tables.INDEX_TABLE_COURSES}.tutor`, 

@@ -13,18 +13,19 @@ export interface Param {
   search: ObjectValueOf<string>
 }
 
-export interface EntrollmentStorageManager {
-  enroll(context: Context, course: Course, billingPlan: BillingPlan, student: Student, open: Date, expire?: Date): Promise<void>
+export interface EnrollmentStorageManager {
+  enroll(context: Context, courseUUID: string, student: Student, open: Date, expire?: Date): Promise<void>
+  fetchEnrollment(context: Context, student: Student, pagination?: PaginationParam): Promise<Paginated<Enrollment>>
   getEnrollment(context: Context, couresUUID: string, student: string): Promise<Enrollment>
 
-  process(context: Context, module: Module, students: Student, process: number): Promise<void>
-  getLearnProcess(context: Context, moduleUUID: string, studentUsername: string): Promise<LearnProcess>
+  process(context: Context, moduleUUID: String, students: Student, process: number): Promise<void>
+  getLearnProcess(context: Context, courseUUID: string, studentUsername: string): Promise<LearnProcess>
   
   quizSubmit(context: Context, quiz: Quiz, question: Question, answer: string): Promise<void>
   getQuizResult(context: Context, quizUUID: string, studentUsername: string): Promise<QuizResult>
   
 }
 
-export default interface EntrollmentManager {
-  storage(): EntrollmentStorageManager
+export default interface EnrollmentManager {
+  storage(): EnrollmentStorageManager
 }

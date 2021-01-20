@@ -41,7 +41,7 @@ export interface Pagination extends PaginationParam {
 
 export interface Paginated<Type> {
   pagination: Pagination
-  data: Type
+  data: Type[]
 }
 
 export interface ObjectValueOf<T> {

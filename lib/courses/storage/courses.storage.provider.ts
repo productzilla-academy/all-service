@@ -21,7 +21,7 @@ export class CourseStorageProvider implements CourseStorageManager{
   herarcialModules(context: Context, courseUUID: string): Promise<HerarcialModule[]> {
     return this.hotDB ? this.hotDB.herarcialModules(context, courseUUID) : this.coldDB.herarcialModules(context, courseUUID)
   }
-  fetchCourses(context: Context, param: Param<CourseQueryParam>): Promise<Paginated<Course[]>> {
+  fetchCourses(context: Context, param: Param<CourseQueryParam>): Promise<Paginated<Course>> {
     return this.hotDB && this.hotDB.fetchCourses(context, param) || this.coldDB.fetchCourses(context, param)
   }
   getCourse(context: Context, courseUUID: string): Promise<Course> {
