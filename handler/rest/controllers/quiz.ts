@@ -17,7 +17,8 @@ const getQuestionUUID = (r: RestRequest): string => r.params[quizParams.question
 
 const getQuizBody = (r: RestRequest): Quiz => ({
   description: r.body.description,
-  name: r.body.name
+  name: r.body.name,
+  can_retry: r.body.can_retry
 } as Quiz)
 
 const getQuestionBody = (r: RestRequest): Question => ({

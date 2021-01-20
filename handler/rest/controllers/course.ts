@@ -65,7 +65,7 @@ export const courseController = (c: ConfigProvider, m: CoreManager) => ({
   },
   async fetchCourseByCareer(r: RestRequest, w: Response){
     const levels = await m.careerManager().fetchLevel(r.context)
-    const p: Promise<[Error, Paginated<Course[]>]>[] = []
+    const p: Promise<[Error, Paginated<Course>]>[] = []
     for (const i in levels) {
       const level = levels[i]
       p.push(
@@ -86,7 +86,7 @@ export const courseController = (c: ConfigProvider, m: CoreManager) => ({
     const l = await Promise.all(p)
     interface CourseLevel {
       level: Level
-      courses: Paginated<Course[]>
+      courses: Paginated<Course>
     }
     const result: CourseLevel[] = []
     for (const i in levels) {

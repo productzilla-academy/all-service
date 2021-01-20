@@ -2028,6 +2028,9 @@
           },
           "description": {
             "type": "string"
+          },
+          "can_retry": {
+            "type": "boolean"
           }
         }
       },
