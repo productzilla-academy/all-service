@@ -18,7 +18,7 @@ export interface EnrollmentStorageManager {
   fetchEnrollment(context: Context, student: Student, pagination?: PaginationParam): Promise<Paginated<Enrollment>>
   getEnrollment(context: Context, couresUUID: string, student: string): Promise<Enrollment>
 
-  process(context: Context, moduleUUID: String, students: Student, process: number): Promise<void>
+  process(context: Context, moduleUUID: String, students: Student): Promise<void>
   getLearnProcess(context: Context, courseUUID: string, studentUsername: string): Promise<LearnProcess>
   
   quizSubmit(context: Context, quiz: Quiz, question: Question, answer: string): Promise<void>
