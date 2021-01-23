@@ -11,6 +11,7 @@ import courseController, { courseParams } from "./controllers/course"
 import moduleController, { moduleParams } from "./controllers/module"
 import courceCertificateController, { certificateParams } from "./controllers/course.certificate"
 import quizController, { quizParams } from "./controllers/quiz"
+import enrollmentController, { enrollmentParams } from "./controllers/enrollment"
 import expressFileUpload from 'express-fileupload'
 import { globalParams } from "./controllers/global"
 import cors from 'cors'
@@ -26,7 +27,7 @@ export const RestRouter = (c: ConfigProvider, m: CoreManager) => {
   const certificateCtrl = courceCertificateController(c, m)
   const quizCtrl = quizController(c, m)
   const assetCtrl = assetController(c, m)
-
+  const enrollmentCtrl = enrollmentController(c, m)
 
   router.use(bodyParser.json())
   router.use(uploadRouter)
@@ -92,6 +93,19 @@ export const RestRouter = (c: ConfigProvider, m: CoreManager) => {
 
   router.get(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/quizes/:${quizParams.quizUUID}/questions/:${quizParams.questionUUID}/options`, quizCtrl.fetchQuizOptions)
   router.put(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/quizes/:${quizParams.quizUUID}/questions/:${quizParams.questionUUID}/options`, quizCtrl.updateQuizOptions)
+  
+  router.put(`/courses/:${courseParams.uuid}/enroll`, enrollmentCtrl.enroll)
+  
+  router.get(`/students/:${enrollmentParams.student}/courses`, enrollmentCtrl.fetchEnrollments)
+  router.get(`/students/:${enrollmentParams.student}/courses/:${courseParams.uuid}`, enrollmentCtrl.getEnrollment)
+  router.get(`/students/:${enrollmentParams.student}/courses/:${courseParams.uuid}/modules`, enrollmentCtrl.fetchModuleProgress)
+  router.get(`/students/:${enrollmentParams.student}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}`, enrollmentCtrl.getModuleProgress)
+  router.put(`/students/:${enrollmentParams.student}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}`, enrollmentCtrl.submitModule)
+  
+  router.put(`/students/:${enrollmentParams.student}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/quizes/:${quizParams.quizUUID}`, enrollmentCtrl.submitModule)
+  uploadRouter.put(`/students/:${enrollmentParams.student}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/quizes/:${quizParams.quizUUID}/questions/:${quizParams.questionUUID}/answer/file`, enrollmentCtrl.putFileAnswer)
+
+  router.put(`/students/:${enrollmentParams.student}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/quizes/:${quizParams.quizUUID}/questions/:${quizParams.questionUUID}/answer`, enrollmentCtrl.putAnswer)
 
   uploadRouter.put(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/cover`, courseCtrl.updateCover)
   uploadRouter.put(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/cover`, moduleCtrl.updateCover)

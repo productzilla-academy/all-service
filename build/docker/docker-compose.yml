@@ -15,7 +15,8 @@ services:
       - 55558:3306
     networks:
       default:
-
+    volumes:
+      - ./volumes:/var/lib/mysql
   core-service-proxy:
     image: abiosoft/caddy:0.11.1
     restart: unless-stopped

@@ -11,11 +11,11 @@ export const quizParams = {
   questionUUID: 'question_uuid'
 }
 
-const getQuizUUID = (r: RestRequest): string => r.params[quizParams.quizUUID]
+export const getQuizUUID = (r: RestRequest): string => r.params[quizParams.quizUUID]
 
-const getQuestionUUID = (r: RestRequest): string => r.params[quizParams.questionUUID]
+export const getQuestionUUID = (r: RestRequest): string => r.params[quizParams.questionUUID]
 
-const getQuizBody = (r: RestRequest): Quiz => ({
+export const getQuizBody = (r: RestRequest): Quiz => ({
   description: r.body.description,
   name: r.body.name,
   can_retry: r.body.can_retry

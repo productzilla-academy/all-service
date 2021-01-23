@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-
+import Context from '../context'
 interface File {
 
 }
@@ -10,7 +10,7 @@ interface FileUpload {
 declare global {
   namespace Express {
     interface Request {
-
+      context: Context
     }
     interface Respose {
       

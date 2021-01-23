@@ -1382,6 +1382,354 @@
           }
         }
       }
+    },
+    "/courses/{course_uuid}/enroll": {
+      "put": {
+        "tags": [
+          "Enrollment"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Enrollment"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Message"
+          }
+        }
+      }
+    },
+    "/students/{student_username}/courses": {
+      "get": {
+        "tags": [
+          "Enrollment"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "student_username",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/FetchEnrollmentsResponse"
+          }
+        }
+      }
+    },
+    "/students/{student_username}/courses/{course_uuid}": {
+      "get": {
+        "tags": [
+          "Enrollment"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "student_username",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/getEnrollmentsResponse"
+          }
+        }
+      }
+    },
+    "/students/{student_username}/courses/{course_uuid}/modules": {
+      "get": {
+        "tags": [
+          "Enrollment"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "student_username",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/fetchModuleProcess"
+          }
+        }
+      }
+    },
+    "/students/{student_username}/courses/{course_uuid}/modules/{module_uuid}": {
+      "get": {
+        "tags": [
+          "Enrollment"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "student_username",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "module_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/getModuleProcess"
+          }
+        }
+      },
+      "put": {
+        "description": "finishing module without quiz",
+        "tags": [
+          "Enrollment"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "student_username",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "module_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Message"
+          }
+        }
+      }
+    },
+    "/students/{student_username}/courses/{course_uuid}/modules/{module_uuid}/quizes/{quiz_uuid}": {
+      "put": {
+        "description": "finishing module contains quiz",
+        "tags": [
+          "Enrollment"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "student_username",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "module_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "quiz_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/FinishModule"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Message"
+          }
+        }
+      }
+    },
+    "/students/{student_username}/courses/{course_uuid}/modules/{module_uuid}/quizes/{quiz_uuid}/questions/{question_uuid}/answer/file": {
+      "put": {
+        "description": "finishing module contains quiz",
+        "tags": [
+          "Enrollment"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "student_username",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "module_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "quiz_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "question_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/FileRequest"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Message"
+          }
+        }
+      }
+    },
+    "/students/{student_username}/courses/{course_uuid}/modules/{module_uuid}/quizes/{quiz_uuid}/questions/{question_uuid}/answer": {
+      "put": {
+        "description": "finishing module contains quiz",
+        "tags": [
+          "cms"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "student_username",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "module_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "quiz_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "question_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/CheckAnwser"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Message"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1392,6 +1740,49 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/Message"
+            }
+          }
+        }
+      },
+      "FetchEnrollmentsResponse": {
+        "description": "Enrollment data",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PaginatedEnrollment"
+            }
+          }
+        }
+      },
+      "getEnrollmentsResponse": {
+        "description": "Enrollment data",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Enrollment"
+            }
+          }
+        }
+      },
+      "getModuleProcess": {
+        "description": "Module progress",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ModuleProcess"
+            }
+          }
+        }
+      },
+      "fetchModuleProcess": {
+        "description": "Module progress",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ModuleProcess"
+              }
             }
           }
         }
@@ -1583,6 +1974,49 @@
       }
     },
     "requestBodies": {
+      "FinishModule": {
+        "description": "finish specifict module",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "answers": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AnswerLMS"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "CheckAnwser": {
+        "description": "check specifict answer of quizes questions",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/AnswerCMS"
+            }
+          }
+        }
+      },
+      "Enrollment": {
+        "description": "enroll",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "student": {
+                  "$ref": "#/components/schemas/Student"
+                }
+              }
+            }
+          }
+        }
+      },
       "CareerCreateRequestBody": {
         "description": "Career request",
         "content": {
@@ -2055,7 +2489,7 @@
           },
           "type": {
             "type": "string",
-            "description": "QuestionType:\n * `multiple_choise`\n * `essay`\n * `upload`\n",
+            "description": "QuestionType:\n * `multiple_choise`\n * `essay`\n * `file`\n",
             "default": "multiple_choise"
           }
         }
@@ -2095,6 +2529,107 @@
             }
           }
         ]
+      },
+      "AnswerLMS": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "$ref": "#/components/schemas/UUIDObject"
+          },
+          "answer": {
+            "type": "string",
+            "description": "If question type is `multiple_choise` then fill this field with `Options.Label`, if `essay` then fill it with `plain string` and if `file` then fill with uploaded file string"
+          }
+        }
+      },
+      "AnswerCMS": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AnswerLMS"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "checked": {
+                "type": "boolean"
+              },
+              "is_true": {
+                "type": "boolean"
+              },
+              "point": {
+                "type": "number"
+              }
+            }
+          }
+        ]
+      },
+      "Student": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          }
+        }
+      },
+      "Enrollment": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Generic"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "student": {
+                "$ref": "#/components/schemas/Student"
+              },
+              "open": {
+                "type": "string",
+                "format": "datetime"
+              },
+              "expire": {
+                "type": "string",
+                "format": "datetime"
+              },
+              "progress": {
+                "type": "number",
+                "description": "progress of learning `0 - 1`"
+              }
+            }
+          }
+        ]
+      },
+      "PaginatedEnrollment": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Paginated"
+              },
+              "data": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Enrollment"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ModuleProcess": {
+        "type": "object",
+        "properties": {
+          "module": {
+            "$ref": "#/components/schemas/ModuleProcess"
+          },
+          "student": {
+            "$ref": "#/components/schemas/Student"
+          },
+          "progress": {
+            "type": "number",
+            "description": "progress of learning `0 - 1`"
+          }
+        }
       }
     }
   }

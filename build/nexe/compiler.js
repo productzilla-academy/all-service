@@ -6,6 +6,9 @@ compile({
   resources: [
     'package.json',
     './dist/handler/rest/docs/swagger.json',
+    './dist/bin/examples/images/*',
+    './dist/bin/examples/material/*',
+    './dist/handler/rest/docs/swagger.json',
     './config/custom-environment-variables.json',
     './default.json',
     './dist/lib/storage/drivers/sql/migrations/*.js', 

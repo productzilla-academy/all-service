@@ -58,7 +58,7 @@ export default class CourseObjectStorageProvider implements CourseObjectStorageM
   }
   async uploadModuleMaterial(context: Context, courseUUID: string, moduleUUID: string, file: Buffer): Promise<void> {
     const f = await fileType.fromBuffer(file)
-    if (f.mime.toString().indexOf('video') === -1 || f.mime.toString().indexOf('pdf') === -1) throw BadRequestError(`Wrong uploaded mime type: expect mime video or pdf`)
+    if (f.mime.toString().indexOf('video') === -1 && f.mime.toString().indexOf('pdf') === -1) throw BadRequestError(`Wrong uploaded mime type: expect mime video or pdf`)
     this.objectStorage.uploadFile(context, courseUUID, `modules/${moduleUUID}/material`, file)
   }
   async pipeModuleMaterial(context: Context, courseUUID: string, moduleUUID: string, pipe: PipeFunction): Promise<void> {

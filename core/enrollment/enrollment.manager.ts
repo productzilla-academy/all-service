@@ -1,31 +1,32 @@
 import Context from "../../context"
 import { ObjectValueOf, Paginated, PaginationParam } from "../core.types"
-import { BillingPlan } from "../transactions/billing"
-import Course from "../courses/course"
 import { Enrollment, Student } from "./enroll"
-import Module from "../courses/course.modules"
-import Quiz from "../courses/course.quiz"
-import { LearnProcess } from "./learn.process"
-import { QuizResult } from "./quiz.result"
-import { Question } from "../courses/course.quiz.questions"
+import { Answer } from "./quiz.result"
+import { ModuleProcess } from './learn.process'
 export interface Param {
   pagination: PaginationParam
   search: ObjectValueOf<string>
 }
 
 export interface EnrollmentStorageManager {
-  enroll(context: Context, courseUUID: string, student: Student, open: Date, expire?: Date): Promise<void>
+  enroll(context: Context, student: Student, courseUUID: string, open: Date, expire?: Date): Promise<void>
   fetchEnrollment(context: Context, student: Student, pagination?: PaginationParam): Promise<Paginated<Enrollment>>
-  getEnrollment(context: Context, couresUUID: string, student: string): Promise<Enrollment>
+  getEnrollment(context: Context, student: Student, couresUUID: string): Promise<Enrollment>
 
-  process(context: Context, moduleUUID: String, students: Student): Promise<void>
-  getLearnProcess(context: Context, courseUUID: string, studentUsername: string): Promise<LearnProcess>
+  process(context: Context, student: Student, courseUUID: string, moduleUUID: String, progress?: number): Promise<void>
+  getModuleProgress(context: Context, student: Student, courseUUID: string, moduleUUID: string): Promise<ModuleProcess>
+  fetchModuleProgress(context: Context, student: Student, courseUUID: string): Promise<ModuleProcess[]>
   
-  quizSubmit(context: Context, quiz: Quiz, question: Question, answer: string): Promise<void>
-  getQuizResult(context: Context, quizUUID: string, studentUsername: string): Promise<QuizResult>
-  
+  quizSubmit(context: Context, student: Student, courseUUID: string, moduleUUID: string, quizUUID: string, answers: Answer[]): Promise<void>
+  getQuizResult(context: Context, student: Student, courseUUID: string, moduleUUID: string, quizUUID: string): Promise<Answer[]>
+  updateAnswer(context: Context, student: Student, courseUUID: string, moduleUUID: string, quizUUID: string, questionUUID: string, answer: Answer): Promise<void>
+}
+
+export interface EnrollmentObjectStorageManager{
+  uploadFileAnswer(context: Context, student: Student, courseUUID: string, moduleUUID: string, quizUUID: string, questionUUID: string, file: Buffer): Promise<string>
 }
 
 export default interface EnrollmentManager {
   storage(): EnrollmentStorageManager
+  objectStorage(): EnrollmentObjectStorageManager
 }

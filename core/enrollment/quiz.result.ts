@@ -14,5 +14,7 @@ export interface Answer extends Generic {
   question: Question
   answer: string
   student: Student
-  weight: number
+  point: number
+  checked: boolean
+  is_true: boolean
 }

@@ -11,7 +11,7 @@ import Assets from "./assets/asset"
 // }
 export interface Generic {
   id?: number
-  uuid: string 
+  uuid?: string 
   created?: Date
   updated?: string
 }

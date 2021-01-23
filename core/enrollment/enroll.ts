@@ -10,5 +10,5 @@ export interface Enrollment extends Generic {
   student: Student
   open: Date
   expire?: Date
-  process?: number
+  progress?: number
 }

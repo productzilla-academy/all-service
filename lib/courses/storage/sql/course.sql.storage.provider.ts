@@ -163,8 +163,8 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
         await this.careerLevelRef().insert({
           level: element.level.name,
           career: element.career.name,
-          number: element.number,
-          course: inserted[0].id,
+          number: element.number || 0,
+          course: inserted[0],
         })
       }
     }
@@ -539,16 +539,20 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
         .select(`id`)
         .from(tables.INDEX_TABLE_QUESTIONS)
         .where(`uuid`, '=', questionUUID)
-        .whereIn(`module`, function(){
-          this
-          .select(`id`)
-          .from(tables.INDEX_TABLE_MODULES)
-          .where(`uuid`, `=`, moduleUUID)
-          .whereIn(`course`, function(){
+        .whereIn(`quiz`, function() {
+          this.select(`id`)
+          .from(tables.INDEX_TABLE_QUIZ)
+          .whereIn(`module`, function(){
             this
             .select(`id`)
-            .from(tables.INDEX_TABLE_COURSES)
-            .where(`uuid`, '=', courseUUID)
+            .from(tables.INDEX_TABLE_MODULES)
+            .where(`uuid`, `=`, moduleUUID)
+            .whereIn(`course`, function(){
+              this
+              .select(`id`)
+              .from(tables.INDEX_TABLE_COURSES)
+              .where(`uuid`, '=', courseUUID)
+            })
           })
         })
       })

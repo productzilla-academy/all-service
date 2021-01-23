@@ -112,8 +112,6 @@ export const courseController = (c: ConfigProvider, m: CoreManager) => ({
     const course = await m.courseManager().storage().deleteCourse(r.context, getCourseUUID(r))
     w.status(202).send(course)
   },
-
-  
   async updateCover(r: RestRequest, w: Response){
     const image = getImage(r)
     const course = await m.courseManager().objectStorage().changeCourseCover(r.context, getCourseUUID(r), image.data)
