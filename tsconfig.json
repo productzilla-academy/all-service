@@ -10,6 +10,7 @@
   },
   "include": [
     "bin/app.ts",
-    "types/custom.d.ts"
+    "types/custom.d.ts",
+    "lib/storage/drivers/sql/migrations/*.ts"
   ]
 }

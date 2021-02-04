@@ -2277,6 +2277,10 @@
           "name": {
             "type": "string",
             "description": "Name of career * (-) separated"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of career"
           }
         }
       },
@@ -2295,6 +2299,10 @@
               "number": {
                 "type": "number",
                 "description": "Number of sorting level"
+              },
+              "description": {
+                "type": "string",
+                "description": "Description of level"
               }
             }
           }

@@ -13,11 +13,13 @@ export const getCareerName = (r: RestRequest): string => r.params[careerParam.na
 
 const getCareerBody = (r: RestRequest): Career => ({
   name: r.body.name  && r.body.name.toLocaleLowerCase().split(' ').join('-') ,
+  description: r.body.description
 })
 
 const getLevelBody = (r: RestRequest): Level => ({
   name: r.body.name,
-  number: r.body.number
+  number: r.body.number,
+  description: r.body.description
 })
 
 export const careerController = (configProvider: ConfigProvider, m: CoreManager) => ({

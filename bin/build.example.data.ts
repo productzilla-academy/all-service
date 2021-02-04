@@ -10,14 +10,14 @@ const d = new DriverDefault()
 export default async function runExample() {
   const context = new Context({span: new Span()})
   const manager = d.registry().manager()
-  // for (let i = 0; i < careers.length; i++) {
-  //   const element = careers[i];
-  //   await manager.careerManager().createCareer(context, element)
-  // }
-  // for (let i = 0; i < levels.length; i++) {
-  //   const element = levels[i];
-  //   await manager.careerManager().createLevel(context, element)
-  // }
+  for (let i = 0; i < careers.length; i++) {
+    const element = careers[i];
+    await to(manager.careerManager().createCareer(context, element))
+  }
+  for (let i = 0; i < levels.length; i++) {
+    const element = levels[i];
+    await to(manager.careerManager().createLevel(context, element))
+  }
   await to(manager.courseManager().storage().deleteModule(context, `a9242630-809a-5e3b-9663-58df8abb7fd0`, `e55cccad-4e20-5e78-a025-a66ba7178531`))
   await to(manager.courseManager().storage().deleteCourse(context, `a9242630-809a-5e3b-9663-58df8abb7fd0`))
   const c = await manager.courseManager().storage().createCourse(context, courseExample)

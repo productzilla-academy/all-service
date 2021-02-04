@@ -1,5 +1,4 @@
-import { Response } from "express"
-import { RestRequest } from "../types"
+import { Request, Response } from "express"
 import ConfigProvider from "../../../config"
 import CoreManager from "../../../core/core.manager"
 import HttpProxy from 'http-proxy'
@@ -8,7 +7,7 @@ import { URL } from "url"
 
 const proxy = new HttpProxy()
 export const assetController = (configProvider: ConfigProvider, m: CoreManager) => ({
-  async fetchfile(r: RestRequest, w: Response){
+  async fetchfile(r: Request, w: Response){
     const file = r.params['0']
     const course = getCourseUUID(r)
     const target = await m.objectStorage().getObjectUrl(r.context, course, file)
