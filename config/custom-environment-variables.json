@@ -23,5 +23,6 @@
     "sampler": "JAEGER_SAMPLER",
     "const": "JAEGER_CONST"
   },
-  "dsn": "DSN"
+  "dsn": "DSN",
+  "environment": "NODE_ENV"
 }

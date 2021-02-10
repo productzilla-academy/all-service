@@ -23,5 +23,7 @@
     "sampler": null,
     "const": null
   },
-  "dsn": "mysql://productzilla:productzilla@127.0.0.1:55558/productzilla"
+  "dsn": "mysql://productzilla:productzilla@127.0.0.1:55558/productzilla",
+  "environment": "production"
+
 }

@@ -2,7 +2,7 @@ import { Generic } from "../core.types"
 
 export interface Career {
   name: string
-  description: string
+  description?: string
   created?: Date
   updated?: string
   id?: number

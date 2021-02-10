@@ -25,4 +25,6 @@ export interface ConfigProvider {
   elasticsearchPassword(): string
 
   getProtocol(d: string): string
+
+  getEnvironment(): string
 }

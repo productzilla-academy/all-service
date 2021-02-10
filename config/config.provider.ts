@@ -22,7 +22,9 @@ export const [
 
   keyJaegerURL,
   keyJaegerSampler,
-  keyJaegerConst
+  keyJaegerConst,
+
+  keyEnvironment
 ] = [
   'listen.port',
   'listen.host',
@@ -40,7 +42,9 @@ export const [
 
   'jaeger.url',
   'jaeger.sampler',
-  'jaeger.const'
+  'jaeger.const',
+
+  'environment'
 ]
 
 function newLogger(): BaseLogger {
@@ -96,6 +100,9 @@ export class Config implements ConfigProvider {
   }
   getProtocol(d: string): string {
     return d.split('://')[0]
+  }
+  getEnvironment(): string {
+    return config.get(keyEnvironment)
   }
 }
 

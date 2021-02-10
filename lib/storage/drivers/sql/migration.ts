@@ -12,4 +12,5 @@ export const migrate = (c: ConfigProvider) => async (...param: string[]) => {
       err
     })
   }
+  process.exit()
 }
