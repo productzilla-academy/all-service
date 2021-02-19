@@ -24,7 +24,8 @@ export const getModuleBody = (r: RestRequest): Module => ({
   uuid: getModuleUUID(r),
   weight: r.body.weight,
   overview: r.body.overview,
-  parent_module: r.body.parent_module
+  parent_module: r.body.parent_module,
+  type: r.body.type
 } as Module)
 
 export const moduleController = (c: ConfigProvider, m: CoreManager) => ({

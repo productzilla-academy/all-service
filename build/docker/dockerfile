@@ -22,6 +22,7 @@ COPY . .
 
 RUN npm install -g npm@latest
 RUN npm install -g typescript
+RUN npm install --save config
 RUN npm install
 
 RUN NEXE_PLATFORM=alpine npm run pkg

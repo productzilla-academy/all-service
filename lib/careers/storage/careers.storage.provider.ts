@@ -15,6 +15,14 @@ export class CarrerStorageProvider implements CareerManager{
     this.coldDB = SQLDBProtocols.indexOf(this.configProvider.dsnProtocol()) >= 0 ? new CareerSQLProvider(configProvider): null 
     this.hotDB = !configProvider.elasticsearchURL() ? null : new CareerElasticsearchProvider(configProvider)
   }
+  async getCareer(context: Context, name: string): Promise<Career> {
+    const career = this.hotDB ? await this.hotDB.getCareer(context, name) : await this.coldDB.getCareer(context, name)
+    return career
+  }
+  async getLevel(context: Context, name: string): Promise<Level> {
+    const career = this.hotDB ? await this.hotDB.getLevel(context, name) : await this.coldDB.getLevel(context, name)
+    return career
+  }
   async createCareer(context: Context, career: Career): Promise<void> {
     const p = [this.coldDB.createCareer(context, career)]
     this.hotDB && p.push(this.hotDB.createCareer(context, {...career, name: career.name.toLowerCase().replace(' ', '-')}))

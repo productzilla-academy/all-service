@@ -32,12 +32,20 @@ export const careerController = (configProvider: ConfigProvider, m: CoreManager)
     const c = await m.careerManager().fetchCareer(r.context)
     w.status(200).send(c)
   },
+  async getCareer(r: RestRequest, w: Response) {
+    const c = await m.careerManager().getCareer(r.context, getCareerName(r))
+    w.status(200).send(c)
+  },
   async deleteCareer(r: RestRequest, w: Response) {
     const c = await m.careerManager().deleteCareer(r.context, getCareerName(r))
     w.status(202).send(c)
   },
   async fetchLevel(r: RestRequest, w: Response) {
     const c = await m.careerManager().fetchLevel(r.context)
+    w.status(200).send(c)
+  },
+  async getLevel(r: RestRequest, w: Response) {
+    const c = await m.careerManager().getLevel(r.context, getLevelName(r))
     w.status(200).send(c)
   },
   async createLevel(r: RestRequest, w: Response) {

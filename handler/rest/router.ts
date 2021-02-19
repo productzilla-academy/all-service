@@ -41,7 +41,9 @@ export const RestRouter = (c: ConfigProvider, m: CoreManager) => {
   router.get(`/careers`, careerCtrl.fetchCareer)
   router.post(`/careers`, careerCtrl.createCareer)
   router.delete(`/careers/:${careerParam.name}`, careerCtrl.deleteCareer)
+  router.get(`/careers/:${careerParam.name}`, careerCtrl.getCareer)
   router.get(`/levels`, careerCtrl.fetchLevel)
+  router.get(`/levels/:${careerParam.level}`, careerCtrl.getLevel)
   router.post(`/levels`, careerCtrl.createLevel)
   router.delete(`/levels/:${careerParam.level}`, careerCtrl.deleteLevel)
   router.get(`/careers/:${careerParam.name}/courses`, courseCtrl.fetchCourseByCareer)
@@ -100,6 +102,7 @@ export const RestRouter = (c: ConfigProvider, m: CoreManager) => {
   router.get(`/students/:${enrollmentParams.student}/courses/:${courseParams.uuid}`, enrollmentCtrl.getEnrollment)
   router.get(`/students/:${enrollmentParams.student}/courses/:${courseParams.uuid}/modules`, enrollmentCtrl.fetchModuleProgress)
   router.get(`/students/:${enrollmentParams.student}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}`, enrollmentCtrl.getModuleProgress)
+  router.get(`/students/:${enrollmentParams.student}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/quizes/${quizParams.quizUUID}`, enrollmentCtrl.getQuizResult)
   router.put(`/students/:${enrollmentParams.student}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}`, enrollmentCtrl.submitModule)
   
   router.put(`/students/:${enrollmentParams.student}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/quizes/:${quizParams.quizUUID}`, enrollmentCtrl.submitModule)

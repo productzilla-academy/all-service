@@ -38,6 +38,27 @@
       }
     },
     "/careers/{career_name}": {
+      "get": {
+        "description": "get career data",
+        "tags": [
+          "job"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "career_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/components/responses/Career"
+          }
+        }
+      },
       "delete": {
         "description": "Delete career data",
         "tags": [
@@ -68,7 +89,7 @@
         "description": "Fetch career job level by career name",
         "responses": {
           "200": {
-            "$ref": "#/components/responses/LevelsResponse"
+            "$ref": "#/components/responses/LevelResponse"
           }
         }
       },
@@ -87,6 +108,26 @@
       }
     },
     "/levels/{level_name}": {
+      "get": {
+        "tags": [
+          "job"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "level_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/LevelsResponse"
+          }
+        }
+      },
       "delete": {
         "tags": [
           "job"
@@ -2402,6 +2443,10 @@
               },
               "parent_module": {
                 "$ref": "#/components/schemas/UUIDObject"
+              },
+              "type": {
+                "type": "string",
+                "description": "ModuleType:\n * `module`\n * `assesment`\n"
               }
             }
           }

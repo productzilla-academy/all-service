@@ -8,6 +8,12 @@ export default class CareerElasticsearchProvider implements CareerManager {
   constructor(configProvider: ConfigProvider){
     this.configProvider = configProvider
   }
+  getCareer(context: Context, name: string): Promise<Career> {
+    throw new Error("Method not implemented.")
+  }
+  getLevel(context: Context, name: string): Promise<Level> {
+    throw new Error("Method not implemented.")
+  }
   deleteLevel(context: Context, levelName: string): Promise<void> {
     throw new Error("Method not implemented.")
   }

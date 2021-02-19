@@ -1,5 +1,5 @@
 import { Career, Level } from "../../core/careers";
-import { Course, Module, Options, Question, QuestionType, Quiz } from "../../core/courses";
+import { Certificate, Course, Module, Options, Question, QuestionType, Quiz } from "../../core/courses";
 
 export const careers: Career[] = [
   {
@@ -105,4 +105,35 @@ export const optionsExample: Options[] = [
     value: 'UX B',
     is_answer: false
   }
+]
+const format = `<div style="width:800px; height:600px; padding:20px; text-align:center; border: 10px solid #787878">
+<div style="width:750px; height:550px; padding:20px; text-align:center; border: 5px solid #787878">
+       <span style="font-size:50px; font-weight:bold">Certificate of Completion</span>
+       <br><br>
+       <span style="font-size:25px"><i>This is to certify that</i></span>
+       <br><br>
+       <span style="font-size:30px"><b>{{.username}}</b></span><br/><br/>
+       <span style="font-size:25px"><i>has completed the course</i></span> <br/><br/>
+       <span style="font-size:30px">{{.course_name}}</span> <br/><br/>
+       <span style="font-size:20px">with score of <b>{{.progress}}</b></span> <br/><br/><br/><br/>
+       <span style="font-size:25px"><i>{{.date}}</i></span><br>
+      <span style="font-size:30px">{{.full_date}}</span>
+</div>
+</div>`
+export const certificates: Certificate[] = [
+  {
+    caption: `Top Class`,
+    weight_goal: 80,
+    format
+  } as Certificate,
+  {
+    caption: `Best Class`,
+    weight_goal: 90,
+    format
+  } as Certificate,
+  {
+    caption: `Passed`,
+    weight_goal: 100,
+    format
+  } as Certificate
 ]

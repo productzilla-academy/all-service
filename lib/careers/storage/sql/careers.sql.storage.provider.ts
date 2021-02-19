@@ -18,18 +18,23 @@ export default class CareerSQLProvider implements CareerManager {
   getLevelDB(){
     return SQLConnection(this.configProvider)(tables.INDEX_TABLE_LEVELS)
   }
-  async getLevel(context, name: string): Promise<Career> {
+  async getCareer(context, name: string): Promise<Career> {
     const [c] = await this.getCareerDB().where({ name })
     if(!c) throw NotFoundError(`career not found`)
     return c
   }
+  async getLevel(context, name: string): Promise<Level> {
+    const [c] = await this.getLevelDB().where({ name })
+    if(!c) throw NotFoundError(`level not found`)
+    return c
+  }
   async createCareer(context: Context, career: Career): Promise<void> {
-    const [e] = await to(this.getLevel(context, career.name))
+    const [e] = await to(this.getCareer(context, career.name))
     if (!e) throw DuplicateError(`Career exists`)
     await this.getCareerDB().insert(career)
   }
   async fetchCareer(context: Context): Promise<Career[]> {
-    const careers = await this.getCareerDB().select(`name`)
+    const careers = await this.getCareerDB().select(`name`, `description`)
     if(!careers.length) throw NotFoundError(`Career not found`)
     return careers
   }

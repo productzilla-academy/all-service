@@ -8,7 +8,7 @@ import { BadRequestError, NotFoundError, PrecondtionError } from '../../../../er
 import { to } from 'await-to-js'
 import CareerSQLProvider from '../../../careers/storage/sql/careers.sql.storage.provider'
 import { Level } from '../../../../core/careers'
-
+import {Config as ClassConfigProvider} from '../../../../config/index'
 export default class CourseSQLStorageProvider implements CourseStorageManager {
   configProvider: ConfigProvider
   DB: knex.QueryBuilder
@@ -155,7 +155,6 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
   async createCourse(context: Context, course: Course): Promise<Course> {
     const { career } = course
     delete course.career
-
     const inserted = await this.courseDB().insert({...course, extras: JSON.stringify(course.extras)}, ['id'])
     if(career && career.length > 0) {
       for (const p in career) {
@@ -168,7 +167,6 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
         })
       }
     }
-    
     return {
       ...course,
       career
@@ -207,18 +205,19 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
   async fetchResultCertificate(context: Context, courseUUID: string): Promise<Certificate[]> {
     const certificates = await this.certificateDB()
       .select(
-        `${tables.INDEX_TABLE_RESULT_CERTIFICATE}.uuid`,
-        `${tables.INDEX_TABLE_RESULT_CERTIFICATE}.caption`,
-        `${tables.INDEX_TABLE_RESULT_CERTIFICATE}.weight_goal`,
-        `${tables.INDEX_TABLE_RESULT_CERTIFICATE}.uuid`,
-        `${tables.INDEX_TABLE_RESULT_CERTIFICATE}.created`,
-        `${tables.INDEX_TABLE_RESULT_CERTIFICATE}.updated`,
-        `${tables.INDEX_TABLE_COURSES}.name as course_name`,
-        `${tables.INDEX_TABLE_COURSES}.description as course_description`,
-        `${tables.INDEX_TABLE_COURSES}.uuid as course_uuid`
+          `${tables.INDEX_TABLE_RESULT_CERTIFICATE}.uuid`,
+          `${tables.INDEX_TABLE_RESULT_CERTIFICATE}.caption`,
+          `${tables.INDEX_TABLE_RESULT_CERTIFICATE}.weight_goal`,
+          `${tables.INDEX_TABLE_RESULT_CERTIFICATE}.uuid`,
+          `${tables.INDEX_TABLE_RESULT_CERTIFICATE}.created`,
+          `${tables.INDEX_TABLE_RESULT_CERTIFICATE}.updated`,
+          `${tables.INDEX_TABLE_COURSES}.name as course_name`,
+          `${tables.INDEX_TABLE_COURSES}.description as course_description`,
+          `${tables.INDEX_TABLE_COURSES}.uuid as course_uuid`
         )
         .join(tables.INDEX_TABLE_COURSES, `${tables.INDEX_TABLE_RESULT_CERTIFICATE}.course`, '=', `${tables.INDEX_TABLE_COURSES}.id`)
         .where(`${tables.INDEX_TABLE_COURSES}.uuid`, '=', courseUUID)
+        .orderBy(`weight_goal`, `asc`)
 
     if(certificates.length === 0) throw NotFoundError(`Certificate not setted for this course`)
     const result: Certificate[] = []
@@ -300,6 +299,7 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
     .select(
       'name', 
       'uuid',
+      'type',
       SQLConnection(this.configProvider)
       .from(tables.INDEX_TABLE_MODULES)
       .count('uuid')
@@ -330,6 +330,7 @@ export default class CourseSQLStorageProvider implements CourseStorageManager {
           }
           h.push({
             name: element.name,
+            type: element.type,
             uuid: element.uuid,
             sub_modules: element.sub_modules_count ? [] : null 
           })

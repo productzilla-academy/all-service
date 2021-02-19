@@ -97,14 +97,18 @@ export class EnrollmentSQLStorageProvider implements EnrollmentStorageManager {
   }
   async getEnrollment(context: Context, student: Student, courseUUID: string): Promise<Enrollment> {
     const db = this.enrollmentDB()
-    const [course, [en]] = await Promise.all([
+    const [course, [certificate], [en]] = await Promise.all([
       this.courseProvider.getCourse(context, courseUUID),
-      db.where({ student: student.username })
+      this.courseProvider.fetchResultCertificate(context, courseUUID),
+      db.where({ student: student.username }).whereIn(`course`, function() {
+        this.select(`id`).from(tables.INDEX_TABLE_COURSES).where({uuid: courseUUID})
+      })
     ])
     if(!en) throw NotFoundError(`No enrollment with that data`)
     return {
       ...en,
-      course
+      course,
+      finished: certificate.weight_goal <= en.progress
     }
   }
 

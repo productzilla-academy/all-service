@@ -1,10 +1,10 @@
 import Context from "../context";
 import DriverDefault from "../driver/driver.default"
-import { careers, courseExample, levels, moduleExample, quizExample, questionExample, optionsExample } from "./examples/data"
+import { careers, courseExample, levels, moduleExample, quizExample, questionExample, optionsExample, certificates } from "./examples/data"
 import fs from 'fs'
 import path from 'path'
 import to from "await-to-js";
-import { Course, CourseCareer } from "../core/courses";
+import { Course, CourseCareer, ModuleType } from "../core/courses";
 import { Career, Level } from "../core/careers";
 import { Span } from "opentracing";
 const d = new DriverDefault()
@@ -50,10 +50,15 @@ export default async function runExample() {
       const image = fs.readFileSync(path.join(__dirname, './examples/images/ux-law.jpeg'))
       await manager.courseManager().objectStorage().changeCourseCover(context, c.uuid, image)  
     } else continue
+    for (let certIndex = 0; certIndex < certificates.length; certIndex++) {
+      const element = certificates[certIndex];
+      await to(manager.courseManager().storage().createResultCertificate(context, c.uuid, element))
+    }
     for (let j = 0; j < 10; j++) {
         let module = {
           ...moduleExample,
-          name: `${moduleExample.name} ${j}`
+          name: `${moduleExample.name} ${j}`,
+          type:  j % 2 ? ModuleType.Module : ModuleType.Assesment
         }
         let e:Error;
 
@@ -61,7 +66,6 @@ export default async function runExample() {
         if(e) d.configuration().logger().error(`error-creating-module`, e)
         const material = fs.readFileSync(path.join(__dirname, './examples/material/video-example.mp4'))
         if(i % 2 ) {
-          console.log('sub module')
           const submodule = {
             ...moduleExample,
             name: `${module.name} ${j}`,
@@ -80,7 +84,6 @@ export default async function runExample() {
         if(eQuiz) d.configuration().logger().error(`error-creating-quiz`, eQuiz)
         const [eQuestion, question] = await to(manager.courseManager().storage().createModuleQuizQuestions(context, c.uuid, module.uuid, quiz.uuid, questionExample))
         if(eQuestion) d.configuration().logger().error(`error-creating-question`, { s: eQuestion.stack})
-        d.configuration().logger().info(`question`, question)
         const [eQuestionOptions, options] = await to(manager.courseManager().storage().updateModuleQuizQuestionOptions(context, c.uuid, module.uuid, quiz.uuid, question.uuid, optionsExample))
         if(eQuestionOptions) d.configuration().logger().error(`error-creating-options`, eQuestionOptions)
 
