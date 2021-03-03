@@ -1606,6 +1606,56 @@
         }
       }
     },
+    "/tutor/{tutor_name}/courses/{course_uuid}/modules/{module_uuid}/materials/{quality}": {
+      "put": {
+        "description": "finishing module without quiz",
+        "tags": [
+          "provision"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tutor_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "course_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "module_uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "quality",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Quality"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/MaterialRequest"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Message"
+          }
+        }
+      }
+    },
     "/students/{student_username}/courses/{course_uuid}/modules/{module_uuid}/quizes/{quiz_uuid}": {
       "put": {
         "description": "finishing module contains quiz",
@@ -2168,6 +2218,21 @@
             }
           }
         }
+      },
+      "MaterialRequest": {
+        "content": {
+          "multipart/form-data": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "material": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "schemas": {
@@ -2468,6 +2533,12 @@
               },
               "sub_module_count": {
                 "type": "number"
+              },
+              "material": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Material"
+                }
               }
             }
           }
@@ -2681,6 +2752,21 @@
           "progress": {
             "type": "number",
             "description": "progress of learning `0 - 1`"
+          }
+        }
+      },
+      "Quality": {
+        "type": "string",
+        "description": "Qualities:\n  * `sd`\n  * `hd`\n  * `fhd`\n  * `uhd`\n  * `4k`\n  * `8k`\n  * `144p`\n  * `240p`\n  * `360p`\n  * `480p`\n  * `720p`\n  * `1080p`\n"
+      },
+      "Material": {
+        "type": "object",
+        "properties": {
+          "quality": {
+            "$ref": "#/components/schemas/Quality"
+          },
+          "url": {
+            "type": "string"
           }
         }
       }

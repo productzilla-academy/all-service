@@ -1,6 +1,6 @@
 import ConfigProvider from "../../../config"
 import Context from "../../../context"
-import { CourseObjectStorageManager } from "../../../core/courses"
+import { CourseObjectStorageManager, Material, Quality } from "../../../core/courses"
 import ObjectStorage, { ObjectStorageProvider } from "../../object.storage"
 import fileType from 'file-type'
 import { BadRequestError } from "../../../errors"
@@ -56,13 +56,26 @@ export default class CourseObjectStorageProvider implements CourseObjectStorageM
   async uploadModuleFile(context: Context, courseUUID: string, moduleUUID: string, file: Buffer, filename: string): Promise<void> {
     this.objectStorage.uploadFile(context, courseUUID, `modules/${moduleUUID}/files/${filename}`, file)
   }
-  async uploadModuleMaterial(context: Context, courseUUID: string, moduleUUID: string, file: Buffer): Promise<void> {
+  async uploadModuleMaterial(context: Context, courseUUID: string, moduleUUID: string, quality: Quality, file: Buffer): Promise<void> {
     const f = await fileType.fromBuffer(file)
-    if (f.mime.toString().indexOf('video') === -1 && f.mime.toString().indexOf('pdf') === -1) throw BadRequestError(`Wrong uploaded mime type: expect mime video or pdf`)
-    this.objectStorage.uploadFile(context, courseUUID, `modules/${moduleUUID}/material`, file)
+    if (f.mime.toString().indexOf('video') === -1 && f.ext !== 'mp4') throw BadRequestError(`Wrong uploaded mime type: expect mime video and mp4 extensions`)
+    this.objectStorage.uploadFile(context, courseUUID, `modules/${moduleUUID}/materials/${quality}.mp4`, file)
   }
-  async pipeModuleMaterial(context: Context, courseUUID: string, moduleUUID: string, pipe: PipeFunction): Promise<void> {
-    this.objectStorage.pipeFile(context, courseUUID,`modules/${moduleUUID}/material`, pipe)
+  async fetchModuleMaterials(context: Context, courseUUID: string, moduleUUID: string): Promise<Material[]> {
+    const list = await this.objectStorage.listFile(context, courseUUID, `modules/${moduleUUID}/materials`)
+    const materialList: Material[] = []
+    for (let i = 0; i < list.length; i++) {
+      const element = list[i]
+      materialList.push({
+        quality: element.split('.')[0] as Quality,
+        url: `${courseUUID}/modules/${moduleUUID}/materials/${element}`
+      })
+    }
+    
+    return materialList
+  }
+  async pipeModuleMaterial(context: Context, courseUUID: string, moduleUUID: string, quality: Quality, pipe: PipeFunction): Promise<void> {
+    this.objectStorage.pipeFile(context, courseUUID,`modules/${moduleUUID}/materials/${quality}.mp4`, pipe)
   }
   
 }

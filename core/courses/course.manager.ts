@@ -1,7 +1,7 @@
 import Context from "../../context"
 import { Paginated, Param} from "../core.types"
 import Course, { CourseQueryParam } from "./course"
-import Module, { HerarcialModule } from "./course.modules"
+import Module, { HerarcialModule, Material, Quality } from "./course.modules"
 import Quiz from "./course.quiz"
 import { Options, Question } from "./course.quiz.questions"
 import Certificate from "./course.result.certificate"
@@ -55,8 +55,9 @@ export interface CourseObjectStorageManager {
   uploadModuleCover (context: Context, courseUUID: string, moduleUUID: string, cover: Buffer): Promise<void>
   pipeModuleCover (context: Context, courseUUID: string, moduleUUID: string, pipe: PipeFunction): void
   
-  uploadModuleMaterial(context: Context, courseUUID: string, moduleUUID: string, file: Buffer): Promise<void>
-  pipeModuleMaterial(context: Context, courseUUID: string, moduleUUID: string, pipe: Function): Promise<void>
+  uploadModuleMaterial(context: Context, courseUUID: string, moduleUUID: string, quality: Quality, file: Buffer): Promise<void>
+  fetchModuleMaterials(context: Context, courseUUID: string, moduleUUID: string): Promise<Material[]>
+  pipeModuleMaterial(context: Context, courseUUID: string, moduleUUID: string, quality: Quality, pipe: Function): Promise<void>
 
   uploadModuleFile(context: Context, courseUUID: string, moduleUUID: string, file: Buffer, filename: string): Promise<void>
   fetchModuleFiles (context: Context, courseUUID: string, moduleUUID: string): Promise<string[]>

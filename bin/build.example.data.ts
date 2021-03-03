@@ -4,7 +4,7 @@ import { careers, courseExample, levels, moduleExample, quizExample, questionExa
 import fs from 'fs'
 import path from 'path'
 import to from "await-to-js";
-import { Course, CourseCareer, ModuleType } from "../core/courses";
+import { Course, CourseCareer, ModuleType, Quality } from "../core/courses";
 import { Career, Level } from "../core/careers";
 import { Span } from "opentracing";
 const d = new DriverDefault()
@@ -73,12 +73,7 @@ export default async function runExample() {
           }
           module = await manager.courseManager().storage().createModule(context, c.uuid, submodule)
         }
-        await to(manager.courseManager().objectStorage().uploadModuleFile(context, c.uuid, module.uuid, material, `video-example.mp4`))
-        await to(manager.courseManager().storage().updateModule(context, c.uuid, module.uuid, {
-          ...moduleExample,
-          material: 'video-example.mp4',
-           content: moduleExample.content.replace('{{.video}}', `/files/courses/${c.uuid}/modules/${module.uuid}/files/video-example.mp4`)
-        }))
+        await to(manager.courseManager().objectStorage().uploadModuleMaterial(context, c.uuid, module.uuid, Quality.Q4k, material))
         
         const [eQuiz, quiz] = await to(manager.courseManager().storage().createModuleQuiz(context, c.uuid, module.uuid, quizExample))
         if(eQuiz) d.configuration().logger().error(`error-creating-quiz`, eQuiz)

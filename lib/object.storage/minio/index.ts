@@ -59,18 +59,18 @@ export default class MinioObjectStorageProvider implements ObjectStorageProvider
 
   }
   listFile(context: Context, namespace:string, path: string): Promise<string[]> {
-    return new Promise((resolve, reject) => {
-      const stream = minioClient.listObjects(namespace, path)
-      const objectsList = []
+    return new Promise((r, j) => {
+      const stream = minioClient.listObjectsV2(namespace, `${path}/`, true)
+      console.log(path)
+      const list: string[] = []
       stream.on('data', (obj) => {
-        objectsList.push(obj)
+        const n = obj.name.split('/')
+        list.push(n[n.length - 1]) 
       })
-      stream.on('error', (e) => {
-        reject(InternalServerError(`Error while fetching data`, e))
-      })
-      stream.on('end', () => {
-        resolve(objectsList)
-      })
+      stream.on('error', (err) =>   j(err))
+      
+      stream.on('end', () => r(list) )
+      stream.read()
 
     })
   }

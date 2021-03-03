@@ -1,20 +1,32 @@
+import to from "await-to-js"
 import { Response } from "express"
 import { UploadedFile } from "express-fileupload"
 import ConfigProvider from "../../../config"
 import CoreManager from "../../../core/core.manager"
-import { Module } from "../../../core/courses"
+import { Module, Quality } from "../../../core/courses"
+import { BadRequestError } from "../../../errors"
 import { FileUpload } from "../../../types/custom"
 import { RestRequest } from "../types"
 import { getCourseUUID, getImage } from "./course"
 import { getFileName, getFiles } from "./global"
 
 export const moduleParams = {
-  moduleUUID: 'module_uuid'
+  moduleUUID: 'module_uuid',
+  quality: `quality`
 }
 
 export const getModuleUUID = (r: RestRequest): string => r.params[moduleParams.moduleUUID]
 
 export const getMaterial = (r: RestRequest): UploadedFile => r.files.material as UploadedFile
+
+export const getQuality = (r: RestRequest): Quality => {
+  const q = r.params[moduleParams.quality]
+  console.log(Object.values(Quality))
+  if(!Object.values(Quality).includes(q as Quality)) {
+    throw BadRequestError(`Invalid quality, must be one of: ${JSON.stringify(Object.values(Quality))}, current: ${r.params[moduleParams.quality]}`)
+  }
+  return q as Quality
+}
 
 export const getModuleBody = (r: RestRequest): Module => ({
   content: r.body.content,
@@ -25,18 +37,19 @@ export const getModuleBody = (r: RestRequest): Module => ({
   weight: r.body.weight,
   overview: r.body.overview,
   parent_module: r.body.parent_module,
+  material: r.body.material,
   type: r.body.type
 } as Module)
 
 export const moduleController = (c: ConfigProvider, m: CoreManager) => ({
   async fetchModules(r: RestRequest, w: Response){
     let modules = await m.courseManager().storage().fetchModules(r.context, getCourseUUID(r))
-    
     w.send(modules)
   },
   async getModules(r: RestRequest, w: Response){
-    const module = await m.courseManager().storage().getModule(r.context, getCourseUUID(r), getModuleUUID(r))
-    w.send(module)
+    let module = await m.courseManager().storage().getModule(r.context, getCourseUUID(r), getModuleUUID(r))
+    let [err, material] = await to(m.courseManager().objectStorage().fetchModuleMaterials(r.context, getCourseUUID(r), getModuleUUID(r)))
+    w.send({...module, material: material || []})
   },
   async createModule(r: RestRequest, w: Response){
     const module = getModuleBody(r)
@@ -56,15 +69,14 @@ export const moduleController = (c: ConfigProvider, m: CoreManager) => ({
     const h = await m.courseManager().storage().herarcialModules(r.context, getCourseUUID(r))
     w.send(h)
   },
- 
   async updateCover(r: RestRequest, w: Response){
     const image = getImage(r)
     const course = await m.courseManager().objectStorage().uploadModuleCover(r.context, getCourseUUID(r), getModuleUUID(r), image.data)
     w.status(201).send(course)
   },
   async updateMaterial(r: RestRequest, w: Response){
-    const material = getMaterial(r)
-    const course = await m.courseManager().objectStorage().uploadModuleMaterial(r.context, getCourseUUID(r), getModuleUUID(r), material.data)
+    const quality = getQuality(r)
+    const course = await m.courseManager().objectStorage().uploadModuleMaterial(r.context, getCourseUUID(r), getModuleUUID(r), quality, getMaterial(r).data)
     w.status(201).send(course)
   },
   async uploadFiles(r: RestRequest, w: Response){

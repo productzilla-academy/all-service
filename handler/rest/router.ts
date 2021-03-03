@@ -27,6 +27,7 @@ export const RestRouter = (c: ConfigProvider, m: CoreManager) => {
   const certificateCtrl = courceCertificateController(c, m)
   const quizCtrl = quizController(c, m)
   const assetCtrl = assetController(c, m)
+  
   const enrollmentCtrl = enrollmentController(c, m)
 
   router.use(bodyParser.json())
@@ -76,7 +77,6 @@ export const RestRouter = (c: ConfigProvider, m: CoreManager) => {
   router.put(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}`, moduleCtrl.updateModule)
   router.delete(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}`, moduleCtrl.deleteModule)
 
-
   router.get(`/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/quizes`, quizCtrl.getQuiz)
   router.get(`/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/quizes/:${quizParams.quizUUID}/questions`, quizCtrl.fetchQuestions)
   router.get(`/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/quizes/:${quizParams.quizUUID}/questions/${quizParams.quizUUID}`, quizCtrl.getQuestions)
@@ -115,6 +115,7 @@ export const RestRouter = (c: ConfigProvider, m: CoreManager) => {
   uploadRouter.post(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/files`, moduleCtrl.uploadFiles)
   uploadRouter.get(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/files`, moduleCtrl.fileList)
   uploadRouter.delete(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/files/:${globalParams.filename}`, moduleCtrl.fileList)
+  uploadRouter.put(`/tutor/:${courseParams.tutor}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/materials/:${moduleParams.quality}`, moduleCtrl.updateMaterial)
 
   publicRouter.get(`/files/courses/:${courseParams.uuid}/*`, assetCtrl.fetchfile)
 
