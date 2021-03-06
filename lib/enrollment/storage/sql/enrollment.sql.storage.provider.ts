@@ -3,12 +3,12 @@ import { Transaction } from "knex";
 import ConfigProvider from "../../../../config";
 import Context from "../../../../context";
 import { PaginationParam, Paginated } from "../../../../core/core.types";
-import { Course, CourseStorageManager, Module } from "../../../../core/courses";
+import { Course, CourseStorageManager, HerarcialModule, Module } from "../../../../core/courses";
 import Quiz from "../../../../core/courses/course.quiz";
 import { Question, QuestionType } from "../../../../core/courses/course.quiz.questions";
 import { Student, Enrollment } from "../../../../core/enrollment/enroll";
 import { EnrollmentStorageManager } from "../../../../core/enrollment/enrollment.manager";
-import { LearnProcess, ModuleProcess } from "../../../../core/enrollment/learn.process";
+import { HerarcialModuleProcess, LearnProcess, ModuleProcess } from "../../../../core/enrollment/learn.process";
 import { Answer, QuizResult } from "../../../../core/enrollment/quiz.result";
 import { DuplicateError, InternalServerError, NotFoundError, PrecondtionError } from "../../../../errors";
 import CourseSQLStorageProvider from "../../../courses/storage/sql";
@@ -40,6 +40,23 @@ export class EnrollmentSQLStorageProvider implements EnrollmentStorageManager {
       course: c.id,
       expire
     })
+    const modules = await this.courseProvider.modulesDB().select(`id`)
+    .whereIn(`course`, function() {
+      this.select(`id`).from(tables.INDEX_TABLE_COURSES).where({
+        uuid: courseUUID
+      })
+    })
+    const data = []
+    for (let i = 0; i < modules.length; i++) {
+      const element = modules[i]
+      const isFirst = i === 0
+      data.push({
+        progress: 0, student: student.username, module: element.id, active: isFirst
+      })
+    }
+    await this.learnProcessDB()
+    .insert(data)
+
   }
   async fetchEnrollment(context: Context, student: Student, pagination?: PaginationParam): Promise<Paginated<Enrollment>> {
     let [
@@ -111,8 +128,7 @@ export class EnrollmentSQLStorageProvider implements EnrollmentStorageManager {
       finished: certificate.weight_goal <= en.progress
     }
   }
-
-  async process(context: Context, student: Student, courseUUID: string, moduleUUID?: string, progress?: number): Promise<void> {
+  async process(context: Context, student: Student, courseUUID: string, moduleUUID?: string, progress?: number): Promise<{ next: Module }> {
     await this.getEnrollment(context, student, courseUUID)
     if(moduleUUID) {
       const module = await this.courseProvider.getModule(context, courseUUID, moduleUUID)
@@ -127,19 +143,22 @@ export class EnrollmentSQLStorageProvider implements EnrollmentStorageManager {
           .insert({ 
             progress,
             student: student.username,
-            module: module.id
+            module: module.id,
+            done: true
           })
       } else {
         await this.learnProcessDB()
         .update({ 
-          progress
+          progress,
+          done: true
         })
         .where({
           module: module.id, 
-          student: student.username
+          student: student.username,
         })
       }
     }
+    const next = await this.toogleNextActive(context, student, moduleUUID)
     const [mps] = await this.learnProcessDB().sum(`progress as sum_of_progress`).whereIn(`module`, function(){
       this.select(`id`).from(tables.INDEX_TABLE_MODULES).whereIn(`course`, function(){
         this.select(`id`).from(tables.INDEX_TABLE_COURSES).where({ uuid: courseUUID })
@@ -158,6 +177,7 @@ export class EnrollmentSQLStorageProvider implements EnrollmentStorageManager {
     }).whereIn(`course`, function(){
       this.select(`id`).from(tables.INDEX_TABLE_COURSES).where({ uuid: courseUUID })
     })
+    return next
   }
 
   async getModuleProgress(context: Context, student: Student, courseUUID: string, moduleUUID: string): Promise<ModuleProcess> {
@@ -188,7 +208,9 @@ export class EnrollmentSQLStorageProvider implements EnrollmentStorageManager {
       updated: data.updated,
       students: {
         username: data.student
-      }
+      },
+      active: data.active,
+      done: data.done
     }
   }
   
@@ -222,14 +244,80 @@ export class EnrollmentSQLStorageProvider implements EnrollmentStorageManager {
           updated: element.updated,
           students: {
             username: element.student
-          }
+          },
+          active: element.active,
+          done: element.done
         })
       }
     }
     return r
   }
+  private async getHModuleProgress (context: Context, student: Student, courseUUID: string, m: HerarcialModule[]): Promise<HerarcialModuleProcess[]> {
+    const p:Promise<[Error, ModuleProcess]>[] = []
+    let hModule:HerarcialModuleProcess[] = []
+    for (const i in m) {
+      const element = m[i]
+      const subModuleP = element.sub_modules && await this.getHModuleProgress(context, student, courseUUID, element.sub_modules) || null
+      hModule.push({
+        uuid: element.uuid,
+        name: element.name,
+        sub_modules: subModuleP,
+        type: element.type,
+        module_process: null as ModuleProcess
+      })
+      p.push(to(this.getModuleProgress(context, student, courseUUID, element.uuid)))
+    }
+    const module_processes = await Promise.all(p)
+    for (const i in module_processes) {
+        const [err, mP] = module_processes[i];
+        hModule[i].module_process = !err && mP || null 
+    }
+    return hModule
+  }
 
-  async quizSubmit(context: Context, student: Student, courseUUID: string, moduleUUID: string, quizUUID: string, answers: Answer[]): Promise<void> {
+  async herarcialModuleProgress(context: Context, student: Student, courseUUID: string): Promise<HerarcialModuleProcess[]> {
+    const hModule = await this.courseProvider.herarcialModules(context, courseUUID)
+    const hModuleProcess = await this.getHModuleProgress(context, student, courseUUID, hModule)
+    return hModuleProcess
+  }
+
+  private async getNextModule(context: Context, selectedModuleUUID: string, searchToParent: boolean = false): Promise<number> {
+    const [m] = await this.courseProvider.modulesDB().select(`id`, `parent_module`).where(`uuid`, selectedModuleUUID).orderBy(`number`, `asc`)
+    if(!m) return null
+
+    const parentModule = m.parent_module
+    if(!searchToParent) {
+      const [firstModuleChildLevel] = await this.courseProvider.modulesDB().select(`id`, `parent_module`).where({ parent_module: m.id }).orderBy(`number`, `asc`)
+      if(firstModuleChildLevel) return firstModuleChildLevel.id  
+    }
+    const modulesOnSameLevel = await this.courseProvider.modulesDB().select(`id`, `parent_module`).where({ parent_module: m.parent_module }).orderBy(`number`, `asc`)
+    let next: number = null
+    for (let index = 0; index < modulesOnSameLevel.length; index++) {
+      const element = modulesOnSameLevel[index];
+      if(element.id === m.id) {
+        next = modulesOnSameLevel[index + 1] && modulesOnSameLevel[index + 1].id || null
+        break
+      }
+    }
+    if (next) return next
+    if (!next && !parentModule) return null
+    const [pModule] = await this.courseProvider.modulesDB().select(`uuid`).where(`id`, parentModule)
+    return this.getNextModule(context, pModule.uuid, true)
+  }
+  private async toogleNextActive(context: Context, student: Student, moduleUUID: string): Promise<{ next: Module }> {
+    const nextModuleID = await this.getNextModule(context, moduleUUID)
+    if(!nextModuleID) return { next: null  }
+    await this.learnProcessDB().update({
+      active: true
+    }).where({ 
+      student: student.username
+    }).whereIn(`module`, function() {
+      this.select(`id`).from(`${tables.INDEX_TABLE_MODULES}`).where({ id: nextModuleID})
+    })
+    return { next: { module: nextModuleID } as any  }
+  }
+
+  async quizSubmit(context: Context, student: Student, courseUUID: string, moduleUUID: string, quizUUID: string, answers: Answer[]): Promise<{ next: Module }> {
     const module = await this.courseProvider.getModule(context, courseUUID, moduleUUID)
     let totalPoint = 0
     let deviderPoint = 0
@@ -280,7 +368,8 @@ export class EnrollmentSQLStorageProvider implements EnrollmentStorageManager {
     })
     await this.quizAnswerDB().insert(dataAnswer)
     const moduleProgress = mustCheck ? 0 : (totalPoint / deviderPoint) * module.weight
-    await this.process(context, student, courseUUID, moduleUUID, moduleProgress)
+    const processed = await this.process(context, student, courseUUID, moduleUUID, moduleProgress)
+    return processed
   }
   async updateAnswer(context: Context, student: Student, courseUUID: string, moduleUUID: string, quizUUID: string, questionUUID: string, answer: Answer): Promise<void> {
     const question = await this.courseProvider.getModuleQuizQuestions(context, courseUUID, moduleUUID, quizUUID, questionUUID)

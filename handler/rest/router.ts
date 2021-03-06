@@ -101,6 +101,7 @@ export const RestRouter = (c: ConfigProvider, m: CoreManager) => {
   router.get(`/students/:${enrollmentParams.student}/courses`, enrollmentCtrl.fetchEnrollments)
   router.get(`/students/:${enrollmentParams.student}/courses/:${courseParams.uuid}`, enrollmentCtrl.getEnrollment)
   router.get(`/students/:${enrollmentParams.student}/courses/:${courseParams.uuid}/modules`, enrollmentCtrl.fetchModuleProgress)
+  router.get(`/students/:${enrollmentParams.student}/courses/:${courseParams.uuid}/modules/herarcial`, enrollmentCtrl.herarcialModuleProgress)
   router.get(`/students/:${enrollmentParams.student}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}`, enrollmentCtrl.getModuleProgress)
   router.get(`/students/:${enrollmentParams.student}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}/quizes/${quizParams.quizUUID}`, enrollmentCtrl.getQuizResult)
   router.put(`/students/:${enrollmentParams.student}/courses/:${courseParams.uuid}/modules/:${moduleParams.moduleUUID}`, enrollmentCtrl.submitModule)

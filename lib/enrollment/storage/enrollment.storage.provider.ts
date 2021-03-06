@@ -1,9 +1,10 @@
 import ConfigProvider from "../../../config";
 import Context from "../../../context";
 import { PaginationParam, Paginated } from "../../../core/core.types";
+import { Module } from "../../../core/courses";
 import { Student, Enrollment } from "../../../core/enrollment/enroll";
 import { EnrollmentStorageManager } from "../../../core/enrollment/enrollment.manager";
-import { ModuleProcess } from "../../../core/enrollment/learn.process";
+import { HerarcialModuleProcess, ModuleProcess } from "../../../core/enrollment/learn.process";
 import { Answer } from "../../../core/enrollment/quiz.result";
 import { SQLDBProtocols } from "../../storage/storage.types";
 import EnrollmentElasticsearchStorageProvider from "./elasticsearch/enrollment.elasticsearch.storage.provider";
@@ -20,11 +21,14 @@ export default class EnrollmentStorageProvider implements EnrollmentStorageManag
     this.coldDB = SQLDBProtocols.indexOf(this.configProvider.dsnProtocol()) >= 0 ? new EnrollmentSQLStorageProvider(configProvider): null 
     this.hotDB = !configProvider.elasticsearchURL() ? null : new EnrollmentElasticsearchStorageProvider(configProvider)
   }
+  herarcialModuleProgress(context: Context, student: Student, courseUUID: string): Promise<HerarcialModuleProcess[]> {
+    return this.hotDB && this.hotDB.herarcialModuleProgress(context, student, courseUUID) || this.coldDB.herarcialModuleProgress(context, student, courseUUID)
+  }
   async enroll(context: Context, student: Student, courseUUID: string, open: Date, expire?: Date): Promise<void> {
     const p: Promise<void>[] = [
       this.coldDB.enroll(context, student, courseUUID, open, expire)
     ]
-    if(this.hotDB) p.push(this.hotDB.enroll(context, student, courseUUID, open, expire))
+    if (this.hotDB) p.push(this.hotDB.enroll(context, student, courseUUID, open, expire))
     await Promise.all(p)
   }
   fetchEnrollment(context: Context, student: Student, pagination?: PaginationParam): Promise<Paginated<Enrollment>> {
@@ -33,13 +37,13 @@ export default class EnrollmentStorageProvider implements EnrollmentStorageManag
   getEnrollment(context: Context, student: Student, courseUUID: string): Promise<Enrollment> {
     return this.hotDB && this.hotDB.getEnrollment(context, student, courseUUID) || this.coldDB.getEnrollment(context, student, courseUUID)
   }
-  async process(context: Context, student: Student, courseUUID: string, moduleUUID: String, progress?: number): Promise<void> {
-    const p: Promise<void>[] = [
+  async process(context: Context, student: Student, courseUUID: string, moduleUUID: String, progress?: number): Promise<{ next: Module }> {
+    const p: Promise<{ next: Module }>[] = [
       this.coldDB.process(context, student, courseUUID, moduleUUID, progress)
     ]
     if(this.hotDB) p.push(this.hotDB.process(context, student, courseUUID, moduleUUID, progress))
-    await Promise.all(p)
-
+    const r = await Promise.all(p)
+    return r[r.length - 1]
   }
   getModuleProgress(context: Context, student: Student, courseUUID: string, moduleUUID: string): Promise<ModuleProcess> {
     return this.hotDB && this.hotDB.getModuleProgress(context, student, courseUUID, moduleUUID) || this.coldDB.getModuleProgress(context, student, courseUUID, moduleUUID)
@@ -47,12 +51,13 @@ export default class EnrollmentStorageProvider implements EnrollmentStorageManag
   fetchModuleProgress(context: Context, student: Student, courseUUID: string): Promise<ModuleProcess[]> {
     return this.hotDB && this.hotDB.fetchModuleProgress(context, student, courseUUID) || this.coldDB.fetchModuleProgress(context, student, courseUUID)
   }
-  async quizSubmit(context: Context, student: Student, courseUUID: string, moduleUUID: string, quizUUID: string, answers: Answer[]): Promise<void> {
-    const p: Promise<void>[] = [
+  async quizSubmit(context: Context, student: Student, courseUUID: string, moduleUUID: string, quizUUID: string, answers: Answer[]): Promise<{ next: Module }> {
+    const p: Promise<{ next: Module }>[] = [
       this.coldDB.quizSubmit(context, student, courseUUID, moduleUUID, quizUUID, answers)
     ]
     if(this.hotDB) p.push(this.hotDB.quizSubmit(context, student, courseUUID, moduleUUID, quizUUID, answers))
-    await Promise.all(p)
+    const r = await Promise.all(p)
+    return r[r.length - 1]
   }
   getQuizResult(context: Context, student: Student, courseUUID: string, moduleUUID: string, quizUUID: string): Promise<Answer[]> {
     return this.hotDB && this.hotDB.getQuizResult(context, student, courseUUID, moduleUUID, quizUUID) || this.coldDB.getQuizResult(context, student, courseUUID, moduleUUID, quizUUID)

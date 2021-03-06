@@ -1,14 +1,18 @@
 import ConfigProvider from "../../../../config";
 import Context from "../../../../context";
 import { PaginationParam, Paginated } from "../../../../core/core.types";
+import { Module } from "../../../../core/courses";
 import { Student, Enrollment } from "../../../../core/enrollment/enroll";
 import { EnrollmentStorageManager } from "../../../../core/enrollment/enrollment.manager";
-import { ModuleProcess } from "../../../../core/enrollment/learn.process";
+import { HerarcialModuleProcess, ModuleProcess } from "../../../../core/enrollment/learn.process";
 import { Answer } from "../../../../core/enrollment/quiz.result";
 
 export default class EnrollmentElasticsearchStorageProvider implements EnrollmentStorageManager {
   constructor(private configProvider: ConfigProvider){
     
+  }
+  herarcialModuleProgress(context: Context, student: Student, courseUUID: string): Promise<HerarcialModuleProcess[]> {
+    throw new Error("Method not implemented.");
   }
   enroll(context: Context, student: Student, courseUUID: string, open: Date, expire?: Date): Promise<void> {
     throw new Error("Method not implemented.");
@@ -19,7 +23,7 @@ export default class EnrollmentElasticsearchStorageProvider implements Enrollmen
   getEnrollment(context: Context, student: Student, couresUUID: string): Promise<Enrollment> {
     throw new Error("Method not implemented.");
   }
-  process(context: Context, student: Student, courseUUID: string, moduleUUID: String, progress?: number): Promise<void> {
+  process(context: Context, student: Student, courseUUID: string, moduleUUID: String, progress?: number): Promise<{ next: Module }> {
     throw new Error("Method not implemented.");
   }
   getModuleProgress(context: Context, student: Student, courseUUID: string, moduleUUID: string): Promise<ModuleProcess> {
@@ -28,7 +32,7 @@ export default class EnrollmentElasticsearchStorageProvider implements Enrollmen
   fetchModuleProgress(context: Context, student: Student, courseUUID: string): Promise<ModuleProcess[]> {
     throw new Error("Method not implemented.");
   }
-  quizSubmit(context: Context, student: Student, courseUUID: string, moduleUUID: string, quizUUID: string, answers: Answer[]): Promise<void> {
+  quizSubmit(context: Context, student: Student, courseUUID: string, moduleUUID: string, quizUUID: string, answers: Answer[]): Promise<{ next: Module }> {
     throw new Error("Method not implemented.");
   }
   getQuizResult(context: Context, student: Student, courseUUID: string, moduleUUID: string, quizUUID: string): Promise<Answer[]> {

@@ -65,13 +65,12 @@ export const enrollmentController = (c: ConfigProvider, m: CoreManager) => ({
   },
   async submitModule(r: RestRequest, w: Response){
     const answers = getAnswers(r)
-    if(getQuizUUID(r)) 
-      await m.enrollmentManager().storage().quizSubmit(r.context, getStudent(r), getCourseUUID(r), getModuleUUID(r), getQuizUUID(r), answers)
-    else
-      await m.enrollmentManager().storage().process(r.context,  getStudent(r), getCourseUUID(r), getModuleUUID(r))
-    w.status(202).send({
-        message: 'success'
-    })
+    if(getQuizUUID(r)) {
+      const res = await m.enrollmentManager().storage().quizSubmit(r.context, getStudent(r), getCourseUUID(r), getModuleUUID(r), getQuizUUID(r), answers)
+      return w.status(202).send(res)
+    }
+    const res = await m.enrollmentManager().storage().process(r.context,  getStudent(r), getCourseUUID(r), getModuleUUID(r))
+    w.status(202).send(res)
   },
   async getModuleProgress(r: RestRequest, w: Response){
     const mp = await m.enrollmentManager().storage().getModuleProgress(r.context, getStudent(r), getCourseUUID(r), getModuleUUID(r))
@@ -79,6 +78,10 @@ export const enrollmentController = (c: ConfigProvider, m: CoreManager) => ({
   },
   async fetchModuleProgress(r: RestRequest, w: Response){
     const mp = await m.enrollmentManager().storage().fetchModuleProgress(r.context, getStudent(r), getCourseUUID(r))
+    w.send(mp)
+  },
+  async herarcialModuleProgress(r: RestRequest, w: Response){
+    const mp = await m.enrollmentManager().storage().herarcialModuleProgress(r.context, getStudent(r), getCourseUUID(r))
     w.send(mp)
   },
   async getQuizResult(r: RestRequest, w: Response){

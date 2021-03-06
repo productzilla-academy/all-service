@@ -4,7 +4,7 @@ import { careers, courseExample, levels, moduleExample, quizExample, questionExa
 import fs from 'fs'
 import path from 'path'
 import to from "await-to-js";
-import { Course, CourseCareer, ModuleType, Quality } from "../core/courses";
+import { Course, CourseCareer, ModuleType, Quality, Question, QuestionType } from "../core/courses";
 import { Career, Level } from "../core/careers";
 import { Span } from "opentracing";
 const d = new DriverDefault()
@@ -16,6 +16,11 @@ const getRandomCareer = (): string => {
 const getRandomLevel = (): string => {
   const d = Math.floor(Math.random() * levels.length)
   return levels[d].name
+}
+const getRandomQuestionType = (): QuestionType => {
+  const k = Object.values(QuestionType)
+  const d = Math.floor(Math.random() * k.length)
+  return k[d] as QuestionType
 }
 export default async function runExample() {
   const context = new Context({span: new Span()})
@@ -74,14 +79,24 @@ export default async function runExample() {
           module = await manager.courseManager().storage().createModule(context, c.uuid, submodule)
         }
         await to(manager.courseManager().objectStorage().uploadModuleMaterial(context, c.uuid, module.uuid, Quality.Q4k, material))
-        
-        const [eQuiz, quiz] = await to(manager.courseManager().storage().createModuleQuiz(context, c.uuid, module.uuid, quizExample))
-        if(eQuiz) d.configuration().logger().error(`error-creating-quiz`, eQuiz)
-        const [eQuestion, question] = await to(manager.courseManager().storage().createModuleQuizQuestions(context, c.uuid, module.uuid, quiz.uuid, questionExample))
-        if(eQuestion) d.configuration().logger().error(`error-creating-question`, { s: eQuestion.stack})
-        const [eQuestionOptions, options] = await to(manager.courseManager().storage().updateModuleQuizQuestionOptions(context, c.uuid, module.uuid, quiz.uuid, question.uuid, optionsExample))
-        if(eQuestionOptions) d.configuration().logger().error(`error-creating-options`, eQuestionOptions)
-
+        if(module.type === ModuleType.Assesment) {
+          const [eQuiz, quiz] = await to(manager.courseManager().storage().createModuleQuiz(context, c.uuid, module.uuid, quizExample))
+          if(eQuiz) d.configuration().logger().error(`error-creating-quiz`, eQuiz)
+          
+          for (let k = 0; k < 10; k++) {
+            const qEx: Question = {
+              ...questionExample,
+              question: `${questionExample.question} ${k}`,
+              type: getRandomQuestionType()
+            }
+            const [eQuestion, question] = await to(manager.courseManager().storage().createModuleQuizQuestions(context, c.uuid, module.uuid, quiz.uuid, qEx))
+            if(eQuestion) d.configuration().logger().error(`error-creating-question`, { s: eQuestion.stack, eQuestion})            
+            if(qEx.type === QuestionType.MULTIPLE_CHOISE) {
+              const [eQuestionOptions, options] = await to(manager.courseManager().storage().updateModuleQuizQuestionOptions(context, c.uuid, module.uuid, quiz.uuid, question.uuid, optionsExample))
+              if(eQuestionOptions) d.configuration().logger().error(`error-creating-options`, eQuestionOptions)     
+            }
+          }
+        }
       }
     }
 
