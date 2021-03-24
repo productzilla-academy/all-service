@@ -10,7 +10,7 @@ import { Student, Enrollment } from "../../../../core/enrollment/enroll";
 import { EnrollmentStorageManager } from "../../../../core/enrollment/enrollment.manager";
 import { HerarcialModuleProcess, LearnProcess, ModuleProcess } from "../../../../core/enrollment/learn.process";
 import { Answer, QuizResult } from "../../../../core/enrollment/quiz.result";
-import { DuplicateError, InternalServerError, NotFoundError, PrecondtionError } from "../../../../errors";
+import { BadRequestError, DuplicateError, InternalServerError, NotFoundError, PrecondtionError } from "../../../../errors";
 import CourseSQLStorageProvider from "../../../courses/storage/sql";
 import Connection, { tables } from "../../../storage/drivers/sql/connection"
 export class EnrollmentSQLStorageProvider implements EnrollmentStorageManager {
@@ -317,7 +317,7 @@ export class EnrollmentSQLStorageProvider implements EnrollmentStorageManager {
     return { next: { module: nextModuleID } as any  }
   }
 
-  async quizSubmit(context: Context, student: Student, courseUUID: string, moduleUUID: string, quizUUID: string, answers: Answer[]): Promise<{ next: Module }> {
+  async quizSubmit(context: Context, student: Student, courseUUID: string, moduleUUID: string, quizUUID: string, answers: Answer[]): Promise<{ answers:Answer[], next: Module }> {
     const module = await this.courseProvider.getModule(context, courseUUID, moduleUUID)
     let totalPoint = 0
     let deviderPoint = 0
@@ -352,7 +352,15 @@ export class EnrollmentSQLStorageProvider implements EnrollmentStorageManager {
       })
       totalPoint += questionPoint * questionWeight
       deviderPoint += questionWeight
+      answers[key] = {
+        ...element,
+        checked: checked,
+        is_true: isTrue,
+        point: questionPoint
+      }
     }
+    if(deviderPoint === 0) throw BadRequestError(`Answers required`)
+
     await this.quizAnswerDB().delete().where({ 
       student: student.username
     }).whereIn(`question`, function(){
@@ -367,9 +375,46 @@ export class EnrollmentSQLStorageProvider implements EnrollmentStorageManager {
         })
     })
     await this.quizAnswerDB().insert(dataAnswer)
+    
     const moduleProgress = mustCheck ? 0 : (totalPoint / deviderPoint) * module.weight
+    console.log({moduleProgress, deviderPoint, totalPoint, w: module.weight, mustCheck})
     const processed = await this.process(context, student, courseUUID, moduleUUID, moduleProgress)
-    return processed
+    return  {...processed, answers}
+  }
+  async fetchAnswers(context: Context, student: Student, courseUUID: string, moduleUUID: string, quizUUID: string): Promise<Answer[]> {
+    const r = await this.quizAnswerDB().select(
+      `${tables.INDEX_TABLE_QUIZ_ANSWER}.*`,
+      `${tables.INDEX_TABLE_QUESTIONS}.uuid as question_uuid`
+      ).where({ 
+      student: student.username
+    }).join(
+      `${tables.INDEX_TABLE_QUESTIONS}`, 
+      `${tables.INDEX_TABLE_QUIZ_ANSWER}.question`, 
+      '=', 
+      `${tables.INDEX_TABLE_QUESTIONS}.id`
+      ).whereIn(`${tables.INDEX_TABLE_QUESTIONS}.quiz`, function(){
+        this.select(`id`)
+        .from(tables.INDEX_TABLE_QUIZ)
+        .where({
+          uuid: quizUUID
+        })
+    })
+    if(r.length > 0) throw NotFoundError(`No anwser with that students`)
+    const answers: Answer[] = []
+    for (const key in r) {
+      const element = r[key];
+      answers.push({
+        answer: element.answer,
+        checked: element.checked,
+        is_true: element.is_true,
+        point: element.point,
+        question: {
+          uuid: element.question_uuid
+        } as Question,
+        student
+      })
+    }
+    return answers
   }
   async updateAnswer(context: Context, student: Student, courseUUID: string, moduleUUID: string, quizUUID: string, questionUUID: string, answer: Answer): Promise<void> {
     const question = await this.courseProvider.getModuleQuizQuestions(context, courseUUID, moduleUUID, quizUUID, questionUUID)
@@ -398,18 +443,19 @@ export class EnrollmentSQLStorageProvider implements EnrollmentStorageManager {
       `${tables.INDEX_TABLE_QUESTIONS}.uuid as question_uuid`,
       `${tables.INDEX_TABLE_QUESTIONS}.question as question`,
       `${tables.INDEX_TABLE_QUESTIONS}.weight as question_weight`,
-    )
-    .where(`student`, student.username)
-    .whereIn(`question`, function(){
+    ).join(
+      `${tables.INDEX_TABLE_QUESTIONS}`, 
+      `${tables.INDEX_TABLE_QUIZ_ANSWER}.question`, 
+      '=', 
+      `${tables.INDEX_TABLE_QUESTIONS}.id`
+      )
+    .where(`${tables.INDEX_TABLE_QUIZ_ANSWER}.student`, student.username)
+    .whereIn(`${tables.INDEX_TABLE_QUESTIONS}.quiz`, function(){
       this.select(`id`)
-        .from(tables.INDEX_TABLE_QUESTIONS)
-        .whereIn(`quiz`, function(){
-          this.select(`id`)
-          .from(tables.INDEX_TABLE_QUIZ)
-          .where({
-            uuid: quizUUID
-          })
-        })
+      .from(tables.INDEX_TABLE_QUIZ)
+      .where({
+        uuid: quizUUID
+      })
     })
     const answers: Answer[] = []
     for (const key in data) {

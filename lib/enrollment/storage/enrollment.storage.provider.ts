@@ -51,8 +51,8 @@ export default class EnrollmentStorageProvider implements EnrollmentStorageManag
   fetchModuleProgress(context: Context, student: Student, courseUUID: string): Promise<ModuleProcess[]> {
     return this.hotDB && this.hotDB.fetchModuleProgress(context, student, courseUUID) || this.coldDB.fetchModuleProgress(context, student, courseUUID)
   }
-  async quizSubmit(context: Context, student: Student, courseUUID: string, moduleUUID: string, quizUUID: string, answers: Answer[]): Promise<{ next: Module }> {
-    const p: Promise<{ next: Module }>[] = [
+  async quizSubmit(context: Context, student: Student, courseUUID: string, moduleUUID: string, quizUUID: string, answers: Answer[]): Promise<{ answers:Answer[], next: Module }> {
+    const p: Promise<{ answers:Answer[], next: Module }>[] = [
       this.coldDB.quizSubmit(context, student, courseUUID, moduleUUID, quizUUID, answers)
     ]
     if(this.hotDB) p.push(this.hotDB.quizSubmit(context, student, courseUUID, moduleUUID, quizUUID, answers))
@@ -72,4 +72,7 @@ export default class EnrollmentStorageProvider implements EnrollmentStorageManag
 
   }
 
+  fetchAnswers(context: Context, student: Student, courseUUID: string, moduleUUID: string, quizUUID: string): Promise<Answer[]> {
+    return this.hotDB && this.hotDB.fetchAnswers(context, student, courseUUID, moduleUUID, quizUUID) || this.coldDB.fetchAnswers(context, student, courseUUID, moduleUUID, quizUUID)
+  }
 }

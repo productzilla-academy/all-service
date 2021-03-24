@@ -102,6 +102,10 @@ export const enrollmentController = (c: ConfigProvider, m: CoreManager) => ({
     w.status(202).send({
         filename
     })
+  },
+  async fetchAnswer(r: RestRequest, w: Response) {
+    const answers = await m.enrollmentManager().storage().fetchAnswers(r.context, getStudent(r), getCourseUUID(r), getModuleUUID(r), getQuizUUID(r))
+    w.send(answers)
   }
 })
 export default enrollmentController

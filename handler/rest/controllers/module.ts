@@ -21,7 +21,6 @@ export const getMaterial = (r: RestRequest): UploadedFile => r.files.material as
 
 export const getQuality = (r: RestRequest): Quality => {
   const q = r.params[moduleParams.quality]
-  console.log(Object.values(Quality))
   if(!Object.values(Quality).includes(q as Quality)) {
     throw BadRequestError(`Invalid quality, must be one of: ${JSON.stringify(Object.values(Quality))}, current: ${r.params[moduleParams.quality]}`)
   }

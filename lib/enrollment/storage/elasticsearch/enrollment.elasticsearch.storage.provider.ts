@@ -11,6 +11,9 @@ export default class EnrollmentElasticsearchStorageProvider implements Enrollmen
   constructor(private configProvider: ConfigProvider){
     
   }
+  fetchAnswers(context: Context, student: Student, courseUUID: string, moduleUUID: string, quizUUID: string): Promise<Answer[]> {
+    throw new Error("Method not implemented.");
+  }
   herarcialModuleProgress(context: Context, student: Student, courseUUID: string): Promise<HerarcialModuleProcess[]> {
     throw new Error("Method not implemented.");
   }
@@ -32,7 +35,7 @@ export default class EnrollmentElasticsearchStorageProvider implements Enrollmen
   fetchModuleProgress(context: Context, student: Student, courseUUID: string): Promise<ModuleProcess[]> {
     throw new Error("Method not implemented.");
   }
-  quizSubmit(context: Context, student: Student, courseUUID: string, moduleUUID: string, quizUUID: string, answers: Answer[]): Promise<{ next: Module }> {
+  quizSubmit(context: Context, student: Student, courseUUID: string, moduleUUID: string, quizUUID: string, answers: Answer[]): Promise<{ answers:Answer[], next: Module }> {
     throw new Error("Method not implemented.");
   }
   getQuizResult(context: Context, student: Student, courseUUID: string, moduleUUID: string, quizUUID: string): Promise<Answer[]> {

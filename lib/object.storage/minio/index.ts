@@ -61,7 +61,6 @@ export default class MinioObjectStorageProvider implements ObjectStorageProvider
   listFile(context: Context, namespace:string, path: string): Promise<string[]> {
     return new Promise((r, j) => {
       const stream = minioClient.listObjectsV2(namespace, `${path}/`, true)
-      console.log(path)
       const list: string[] = []
       stream.on('data', (obj) => {
         const n = obj.name.split('/')
